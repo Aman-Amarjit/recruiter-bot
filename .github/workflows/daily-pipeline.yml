@@ -1,0 +1,144 @@
+name: RTA Daily Auto-Apply Pipeline
+
+on:
+  schedule:
+    # Daily full run (Sourcing, Enrichment, Drafting) at 4:00 UTC (9:30 AM IST)
+    - cron: '0 4 * * *'
+    # Send queue runs 5 times daily (05:30, 07:30, 09:30, 11:30, 13:30 UTC = 11:00 AM, 1:00 PM, 3:00 PM, 5:00 PM, 7:00 PM IST)
+    - cron: '30 5,7,9,11,13 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  check-killswitch:
+    runs-on: ubuntu-latest
+    outputs:
+      paused: ${{ steps.check.outputs.paused }}
+    steps:
+      - name: Check Killswitch Status
+        id: check
+        run: |
+          if [ "${{ vars.SYSTEM_PAUSED }}" = "true" ]; then
+            echo "Pipeline is PAUSED via GitHub Variables."
+            echo "paused=true" >> $GITHUB_OUTPUT
+          else
+            echo "paused=false" >> $GITHUB_OUTPUT
+          fi
+
+  source:
+    needs: check-killswitch
+    if: needs.check-killswitch.outputs.paused != 'true' && (github.event.schedule == '0 4 * * *' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Sourcing
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ENGINE_ID: ${{ secrets.GOOGLE_CSE_ENGINE_ID }}
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+        run: python -m scripts.sourcing.github_jobs && python -m scripts.sourcing.internshala && python -m scripts.sourcing.remoteok && python -m scripts.sourcing.linkedin
+
+  enrich:
+    needs: [check-killswitch, source]
+    if: needs.check-killswitch.outputs.paused != 'true' && (github.event.schedule == '0 4 * * *' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Enrichment
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
+        run: python -m scripts.enrichment
+
+  personalize:
+    needs: [check-killswitch, enrich]
+    if: needs.check-killswitch.outputs.paused != 'true' && (github.event.schedule == '0 4 * * *' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install WeasyPrint Rendering Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Personalize, Resume Tailor, and Self-Critique
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -m scripts.llm_pipeline
+
+  send:
+    needs: check-killswitch
+    # Gate the send job so it ONLY executes on the 5 sending slot schedules, preventing it from executing in parallel during the 4:00 sourcing run.
+    if: needs.check-killswitch.outputs.paused != 'true' && (github.event.schedule == '30 5,7,9,11,13 * * *' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep-Warm Portfolio
+        run: curl -sL "${{ secrets.PORTFOLIO_URL }}"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Paced Sending & Follow-ups
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_SENDER_EMAIL: ${{ secrets.RESEND_SENDER_EMAIL }}
+          SEND_DISABLED: ${{ secrets.SEND_DISABLED }}
+          SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        run: python -m scripts.followup && python -m scripts.sender
+
+  digest:
+    needs: [check-killswitch, send]
+    if: always() && (github.event.schedule == '0 4 * * *' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Daily Digest Notifier and Keep-Warm Pings
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
+          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: python -m scripts.digest_notifier

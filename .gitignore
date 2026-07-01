@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Pytest
+.pytest_cache/
+
+# Scratch / temp files
+*.log
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

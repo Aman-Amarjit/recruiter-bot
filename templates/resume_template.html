@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume - {{ name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 14mm 18mm;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #111111;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            font-size: 22pt;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            letter-spacing: 0;
+        }
+        .header .contact-line {
+            font-size: 9.5pt;
+            color: #222222;
+        }
+        .header .contact-line a {
+            color: #111111;
+            text-decoration: none;
+        }
+        .contact-sep {
+            margin: 0 6px;
+            color: #888888;
+        }
+
+        /* ── SECTION HEADERS ── */
+        .section-header {
+            font-size: 11pt;
+            font-weight: bold;
+            margin: 11px 0 2px 0;
+            padding-bottom: 2px;
+            border-bottom: 1.2px solid #222222;
+            letter-spacing: 0;
+        }
+
+        /* ── ROW WITH DATE ON RIGHT ── */
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 6px;
+        }
+        .item-title {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+        .item-date {
+            font-size: 9.5pt;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+        .item-subtitle {
+            font-size: 9.5pt;
+            color: #333333;
+            margin: 0 0 2px 0;
+        }
+        .item-meta {
+            font-size: 9pt;
+            font-style: italic;
+            color: #555555;
+            margin-bottom: 2px;
+        }
+
+        /* ── BULLET LISTS ── */
+        ul.bullets {
+            margin: 2px 0 4px 0;
+            padding-left: 16px;
+        }
+        ul.bullets li {
+            font-size: 9.5pt;
+            line-height: 1.4;
+            margin-bottom: 1px;
+        }
+
+        /* ── EDUCATION SECTION ── */
+        .edu-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 6px;
+        }
+        .edu-institution {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+        .edu-degree {
+            font-size: 9.5pt;
+            color: #333333;
+            margin: 1px 0 0 0;
+        }
+        .edu-honor-line {
+            font-size: 9pt;
+            margin: 1px 0 0 0;
+        }
+
+        /* ── SKILLS / CORE COURSES ── */
+        .skills-block {
+            font-size: 9.5pt;
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        /* ── CERTIFICATIONS ── */
+        .cert-item {
+            font-size: 9.5pt;
+            margin-bottom: 1px;
+        }
+
+        /* ── ACTIVITIES / AWARDS ── */
+        .activity-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 5px;
+        }
+        .activity-title {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>{{ name }}</h1>
+        <div class="contact-line">
+            ✉ <a href="mailto:{{ email }}">{{ email }}</a>
+            <span class="contact-sep">·</span>
+            <a href="{{ links.portfolio }}">Portfolio</a>
+            <span class="contact-sep">·</span>
+            <a href="{{ links.github }}">GitHub</a>
+            <span class="contact-sep">·</span>
+            <a href="{{ links.linkedin }}">LinkedIn</a>
+        </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="section-header">Education</div>
+    <div class="edu-row">
+        <span class="edu-institution">{{ education.institution }}</span>
+        <span class="item-date">Aug 2025 –</span>
+    </div>
+    <div class="edu-degree">{{ education.degree }}</div>
+    {% if honors_awards %}
+    {% for honor in honors_awards[:2] %}
+    <div class="edu-honor-line">• {{ honor.title }}, {{ honor.event }} ({{ honor.date }})</div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- CORE SKILLS -->
+    <div class="section-header">Core Skills</div>
+    <div class="skills-block">{{ skills }}</div>
+
+    <!-- PROFESSIONAL EXPERIENCE -->
+    {% if experience %}
+    <div class="section-header">Professional Experience</div>
+    {% for exp in experience %}
+    <div class="item-header">
+        <span class="item-title">{{ exp.role }} – {{ exp.company }}</span>
+        <span class="item-date">{{ exp.start_date }} – {{ exp.end_date }}</span>
+    </div>
+    <div class="item-meta">{{ exp.location }}</div>
+    <ul class="bullets">
+        {% for bullet in exp.bullets[:3] %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+    {% endif %}
+
+    <!-- PROJECTS -->
+    <div class="section-header">Research &amp; Project Experience</div>
+    {% for project in projects %}
+    <div class="item-header">
+        <span class="item-title">{{ project.name }}</span>
+    </div>
+    <div class="item-meta">Technologies: {{ project.technologies | join(', ') }}</div>
+    <ul class="bullets">
+        {% for bullet in project.bullets %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+
+    <!-- CERTIFICATIONS -->
+    {% if certifications %}
+    <div class="section-header">Certifications</div>
+    <div style="margin-top: 3px;">
+        {% for cert in certifications[:4] %}
+        <div class="cert-item">• {{ cert.name }} — <em>{{ cert.issuer }}</em> ({{ cert.issue_date if cert.issue_date else '' }})</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ACTIVITIES -->
+    {% if honors_awards %}
+    <div class="section-header">Activities &amp; Competitions</div>
+    {% for honor in honors_awards %}
+    <div class="activity-row">
+        <span class="activity-title">{{ honor.title }}</span>
+        <span class="item-date">{{ honor.date }}</span>
+    </div>
+    <div class="item-subtitle">{{ honor.event }}</div>
+    {% endfor %}
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,200 @@
+{
+  "name": "Aman Amarjit",
+  "title": "Independent Software Developer & Freelancer",
+  "city": "Dhenkanal, Odisha, India",
+  "education": {
+    "degree": "Bachelor of Technology in Computer Science & Engineering",
+    "institution": "Indira Gandhi Institute of Technology (IGIT), Sarang",
+    "graduation_year": 2029
+  },
+  "experience": [
+    {
+      "role": "Freelance Full-Stack Developer",
+      "company": "Freelance",
+      "location": "Remote",
+      "start_date": "Feb 2026",
+      "end_date": "Present",
+      "bullets": [
+        "Delivered a full-stack freelance project for a client based in Canada, managing the complete workflow from client requirements through to deployment.",
+        "Built the complete API layer, frontend, and backend architecture for an advanced, multi-layer analytics engine.",
+        "Engineered the core API layer with a clean REST-style communication model and strict, well-defined data contracts across both ends of the stack.",
+        "Built a highly modular Single Page Application with a focus on scalability and maintainability, ensuring clean separation of concerns.",
+        "Developed a responsive analytical interface capable of rendering complex system outputs (prediction curves, confidence envelopes, deep data maps) asynchronously without blocking the UI thread.",
+        "Managed async international client communication, milestone tracking, and contract templates independently."
+      ]
+    }
+  ],
+  "domains": {
+    "ai_ml": {
+      "focus": "Automated Agentic Workflows, NLP Pipelines, and LLM Orchestration",
+      "skills": ["Python", "Groq", "FastAPI", "WebSockets", "Twilio API", "TTS/STT", "NLP", "LLM Orchestration", "Agentic Workflows", "Docker", "PM2", "SQLite", "Meta API", "Diffusers", "Pillow"],
+      "projects": [
+        {
+          "name": "Knowledge-Synthesizer",
+          "github_url": "https://github.com/aman-amarjit/Knowledge-Synthesizer",
+          "description": "NLP pipeline that transforms raw discussions into real-time semantic knowledge graphs via entity extraction and concept relationship inference.",
+          "technologies": ["Python", "NLP", "LLMs", "HTML", "CSS", "JavaScript"]
+        },
+        {
+          "name": "discord-ai",
+          "github_url": "https://github.com/aman-amarjit/discord-ai",
+          "description": "Autonomous AI agent with a dynamic mood-state engine, persistent user memory via entity extraction, and behavioral pacing — deployed with Docker + PM2.",
+          "technologies": ["Python", "Groq", "Docker", "PM2", "SQLite"]
+        },
+        {
+          "name": "personal-butler",
+          "github_url": "https://github.com/aman-amarjit/personal-butler",
+          "description": "AI Desktop Agent featuring episodic memory, local RAG pipeline, and a cognitive emotion framework (OCC/PAD model).",
+          "technologies": ["Python", "RAG", "LLMs", "SQLite"]
+        },
+        {
+          "name": "calling-system",
+          "github_url": "https://github.com/aman-amarjit/calling-system",
+          "description": "Integrated VoIP automation system handling intelligent call routing and real-time voice AI agents via Twilio.",
+          "technologies": ["Python", "FastAPI", "WebSockets", "Twilio API", "TTS/STT"]
+        },
+        {
+          "name": "crypto-bot / insta-bot",
+          "github_url": "https://github.com/aman-amarjit/crypto-bot",
+          "description": "Automated Threads/Instagram publishing bots generating daily crypto analytics content and synthetic AI images.",
+          "technologies": ["Python", "Meta API", "Diffusers", "Pillow"]
+        }
+      ]
+    },
+    "cybersecurity": {
+      "focus": "Autonomous Security Auditing and Static Analysis",
+      "skills": ["Cybersecurity", "Risk Assessment and Management", "SIEM Tools and Technologies", "System Hardening", "Intrusion Detection", "Firewalls", "Docker", "SAST", "Subprocess Management"],
+      "projects": [
+        {
+          "name": "xtrace-sdk",
+          "github_url": "https://github.com/aman-amarjit/xtrace-sdk",
+          "description": "Open-source SDK for distributed tracing and observability in networked applications.",
+          "technologies": ["Python", "Docker", "Subprocess Management"]
+        }
+      ]
+    },
+    "robotics": {
+      "focus": "Computer Vision Interfaces and Human-Machine Interaction",
+      "skills": ["Robotics", "Quadcopter Design & Assembly", "UAV Aerodynamics", "BLDC Motors", "Flight Controllers", "Computer Vision", "WebGL", "OpenCV", "MediaPipe", "TensorFlow.js", "IndexedDB", "Three.js", "Python", "HTML", "CSS", "JavaScript"],
+      "projects": [
+        {
+          "name": "solar-system-using-hand-gesture",
+          "github_url": "https://github.com/aman-amarjit/solar-system-using-hand-gesture",
+          "description": "Real-time hand gesture control of a WebGL solar system — MediaPipe computer vision fused with Three.js orbital physics at 30fps.",
+          "technologies": ["JavaScript", "HTML", "WebGL", "Three.js", "MediaPipe", "OpenCV", "Python"]
+        },
+        {
+          "name": "Face-recognition",
+          "github_url": "https://github.com/aman-amarjit/Face-recognition",
+          "description": "Privacy-first face recognition running 100% client-side via TensorFlow.js — zero biometric data leaves the browser.",
+          "technologies": ["JavaScript", "TensorFlow.js", "IndexedDB"]
+        }
+      ]
+    },
+    "fullstack": {
+      "focus": "Full-Stack Web Applications and Systems Engineering",
+      "skills": ["TypeScript", "JavaScript", "Kotlin", "React", "Node.js", "REST APIs", "Real-time Systems", "Algorithmic Trading", "Geopolitical Simulation", "Android Development"],
+      "projects": [
+        {
+          "name": "PLUMBER",
+          "github_url": "https://github.com/aman-amarjit/PLUMBER",
+          "description": "Dual-interface Android service marketplace (Kotlin) with real-time technician tracking and an operator dashboard.",
+          "technologies": ["Kotlin", "Android", "Firebase", "Real-time Systems"]
+        },
+        {
+          "name": "Trade",
+          "github_url": "https://github.com/aman-amarjit/Trade",
+          "description": "Algorithmic trading engine with automated breakout detection, volatility filtering, and fee-aware risk management.",
+          "technologies": ["TypeScript", "Algorithmic Trading", "Financial APIs"]
+        },
+        {
+          "name": "RULE-THE-WORLD",
+          "github_url": "https://github.com/aman-amarjit/RULE-THE-WORLD",
+          "description": "Geopolitical & macroeconomic simulator built on a custom modular JS engine — zero framework dependencies, real-time diplomatic state machines.",
+          "technologies": ["JavaScript", "Custom Game Engine", "State Machines"]
+        }
+      ]
+    }
+  },
+  "certifications": [
+    {
+      "name": "Connect and Protect: Networks and Network Security",
+      "issuer": "Google (via Coursera)",
+      "issue_date": "Feb 2026",
+      "credential_id": "FGKICSA9RMCH",
+      "skills": ["Network Architecture", "Internet Protocol Suite (TCP/IP)", "Firewalls", "VPNs", "System Hardening", "Intrusion Detection"]
+    },
+    {
+      "name": "Certificate of Completion (HTML)",
+      "issuer": "KnowledgeGate",
+      "issue_date": "Jan 2026",
+      "credential_id": "CERT-1768314359045-8069DC94",
+      "skills": ["HTML"]
+    },
+    {
+      "name": "Quadcopter - Building and Flying Workshop",
+      "issuer": "Makxenia Engineering Resource Pvt. Ltd. (in association with INNOVISION 2025, NIT Rourkela)",
+      "issue_date": "Nov 2025",
+      "skills": ["Robotics", "Quadcopter Design & Assembly", "UAV Aerodynamics", "BLDC Motors", "Flight Controllers"]
+    },
+    {
+      "name": "Play It Safe: Manage Security Risks",
+      "issuer": "Google (via Coursera)",
+      "issue_date": "Oct 2025",
+      "credential_id": "GFQ52VBV8IMG",
+      "skills": ["Risk Assessment", "SIEM Tools", "Security Auditing"]
+    },
+    {
+      "name": "Foundations of Cybersecurity",
+      "issuer": "Google (via Coursera)",
+      "issue_date": "Sep 2025",
+      "credential_id": "JIPUZPQ1RTAM",
+      "skills": ["Cybersecurity Fundamentals"]
+    },
+    {
+      "name": "Certificate of Participation: AI for Students - Build Your Own Generative AI Model",
+      "issuer": "NxtWave",
+      "issue_date": "Oct 2025",
+      "skills": ["Generative AI", "LLMs"]
+    }
+  ],
+  "honors_awards": [
+    {
+      "title": "2nd Position in Code Verse",
+      "event": "HORIZON 2026 (Techno-Cultural-Lit Fest of IGIT, Sarang)",
+      "date": "March 2026",
+      "description": "Secured second place in a competitive programming and DSA contest organized by My Comp Society, DevCell, and GSA."
+    },
+    {
+      "title": "HackFest 2026 Participant",
+      "event": "GDG & GDG Cloud Bhubaneswar (held at RCM)",
+      "date": "Jan 2026",
+      "description": "Collaborated on real-world problem statements and mentored sessions in a structured hackathon environment."
+    },
+    {
+      "title": "Hackovium: Vibecraft Edition Participant",
+      "event": "Hackovium (24-Hour Hackathon)",
+      "date": "April 2026",
+      "description": "Participated under team RTA (Reshape The Algorithm) building full-stack and AI/ML systems under tight constraints."
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "proficiency": "Native or bilingual proficiency"
+    },
+    {
+      "language": "Hindi",
+      "proficiency": "Native or bilingual proficiency"
+    },
+    {
+      "language": "Odia",
+      "proficiency": "Native or bilingual proficiency"
+    }
+  ],
+  "links": {
+    "portfolio": "https://aman-amarjit.onrender.com",
+    "github": "https://github.com/aman-amarjit",
+    "linkedin": "https://linkedin.com/in/aman-amarjit"
+  }
+}
