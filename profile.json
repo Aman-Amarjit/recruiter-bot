@@ -64,6 +64,14 @@
           "description": "Automated Threads/Instagram publishing bots generating daily crypto analytics content and synthetic AI images.",
           "technologies": ["Python", "Meta API", "Diffusers", "Pillow"]
         }
+      ],
+      "certifications": [
+        {
+          "name": "Certificate of Participation: AI for Students - Build Your Own Generative AI Model",
+          "issuer": "NxtWave",
+          "issue_date": "Oct 2025",
+          "skills": ["Generative AI", "LLMs"]
+        }
       ]
     },
     "cybersecurity": {
@@ -81,6 +89,14 @@
           "github_url": "https://github.com/aman-amarjit/xtrace-sdk",
           "description": "Distributed tracing SDK utilizing context propagation (HTTP headers) and async event hooks to collect trace spans from remote services, forwarding structured trace logs to a centralized collector.",
           "technologies": ["Python", "Docker", "Subprocess Management"]
+        }
+      ],
+      "certifications": [
+        {
+          "name": "Google Cybersecurity Professional Certificate",
+          "issuer": "Coursera",
+          "issue_date": "Feb 2026",
+          "skills": ["Network Security", "Risk Assessment", "SIEM Tools", "Firewalls", "System Hardening", "Intrusion Detection"]
         }
       ]
     },
@@ -127,20 +143,7 @@
       ]
     }
   },
-  "certifications": [
-    {
-      "name": "Google Cybersecurity Professional Certificate",
-      "issuer": "Coursera",
-      "issue_date": "Feb 2026",
-      "skills": ["Network Security", "Risk Assessment", "SIEM Tools", "Firewalls", "System Hardening", "Intrusion Detection", "Distributed Tracing"]
-    },
-    {
-      "name": "Certificate of Participation: AI for Students - Build Your Own Generative AI Model",
-      "issuer": "NxtWave",
-      "issue_date": "Oct 2025",
-      "skills": ["Generative AI", "LLMs"]
-    }
-  ],
+
   "honors_awards": [
     {
       "title": "2nd Position in Code Verse",

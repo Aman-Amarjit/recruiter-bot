@@ -203,7 +203,7 @@ def render_resume_to_pdf(resume_data: dict, output_path: str):
         links=CANDIDATE_PROFILE["links"],
         education=CANDIDATE_PROFILE["education"],
         experience=CANDIDATE_PROFILE.get("experience", []),
-        certifications=CANDIDATE_PROFILE.get("certifications", []),
+        certifications=CANDIDATE_PROFILE["domains"].get(domain_tag, {}).get("certifications", []),
         languages=CANDIDATE_PROFILE.get("languages", []),
         honors_awards=CANDIDATE_PROFILE.get("honors_awards", []),
         summary=resume_data.get("summary"),
