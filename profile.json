@@ -22,10 +22,10 @@
       "start_date": "Feb 2026",
       "end_date": "Present",
       "bullets": [
-        "Engineered a scalable multi-layer analytics engine for a Canada-based fintech client, improving API response times by 35% using optimized REST endpoints.",
-        "Developed a modular Single Page Application using React and Node.js, ensuring strict data contracts and clean separation of concerns for a 40% reduction in maintenance overhead.",
-        "Developed a non-blocking UI rendering loop using requestAnimationFrame, optimizing the rendering of dense datasets (deep data maps, prediction envelopes) to maintain a steady 60 FPS under heavy data updates.",
-        "Managed international async project milestones, contract SLAs, and independent code deployment workflows on render/Docker environments."
+        "Designed and delivered a multi-layer analytics engine for a Canada-based fintech client, structuring REST endpoints with consistent response contracts and caching layers to reduce redundant server load.",
+        "Built a modular Single Page Application in React and Node.js with a strict separation of concerns between data layer, state management, and view components, making the codebase independently testable at each layer.",
+        "Implemented a non-blocking UI rendering loop using requestAnimationFrame to avoid frame drops when visualizing dense datasets (deep data maps, prediction envelopes) during live data updates.",
+        "Managed international async project milestones, contract SLAs, and independent code deployment workflows on Render and Docker environments."
       ]
     }
   ],
