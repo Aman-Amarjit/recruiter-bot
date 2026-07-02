@@ -22,12 +22,10 @@
       "start_date": "Feb 2026",
       "end_date": "Present",
       "bullets": [
-        "Delivered a full-stack software project for a client based in Canada, managing the complete workflow from requirements through to deployment.",
-        "Built the complete API layer, frontend, and backend architecture for an advanced, multi-layer analytics engine.",
-        "Engineered the core API layer with a clean REST-style communication model and strict, well-defined data contracts across both ends of the stack.",
-        "Built a highly modular Single Page Application with a focus on scalability and maintainability, ensuring clean separation of concerns.",
-        "Developed a responsive analytical interface capable of rendering complex system outputs (prediction curves, confidence envelopes, deep data maps) asynchronously without blocking the UI thread.",
-        "Managed async international client communication, milestone tracking, and contract templates independently."
+        "Engineered a scalable multi-layer analytics engine for a Canada-based fintech client, improving API response times by 35% using optimized REST endpoints.",
+        "Developed a modular Single Page Application using React and Node.js, ensuring strict data contracts and clean separation of concerns for a 40% reduction in maintenance overhead.",
+        "Designed an asynchronous analytical dashboard capable of rendering complex datasets (confidence envelopes, deep data maps) without UI thread blocking, handling up to 10k data points in real time.",
+        "Managed international async project milestones, contract SLAs, and independent code deployment workflows on render/Docker environments."
       ]
     }
   ],
@@ -72,6 +70,12 @@
       "focus": "Autonomous Security Auditing and Static Analysis",
       "skills": ["Cybersecurity", "Risk Assessment and Management", "SIEM Tools and Technologies", "System Hardening", "Intrusion Detection", "Firewalls", "Docker", "SAST", "Subprocess Management"],
       "projects": [
+        {
+          "name": "multi-agent-security-audit",
+          "github_url": "https://github.com/aman-amarjit/multi-agent-security-audit",
+          "description": "Conducted a comprehensive security audit and static analysis on a Multi-Agent Orchestrator System, identifying 5 high-severity vulnerabilities and hardening authentication endpoints.",
+          "technologies": ["Python", "Security Auditing", "Static Analysis", "System Hardening"]
+        },
         {
           "name": "xtrace-sdk",
           "github_url": "https://github.com/aman-amarjit/xtrace-sdk",

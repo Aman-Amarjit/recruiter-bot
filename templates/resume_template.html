@@ -156,6 +156,14 @@
         </div>
     </div>
 
+    <!-- SUMMARY -->
+    {% if summary %}
+    <div class="section-header">Professional Summary</div>
+    <div class="skills-block" style="margin-top: 3px; line-height: 1.4;">
+        {{ summary }}
+    </div>
+    {% endif %}
+
     <!-- EDUCATION -->
     <div class="section-header">Education</div>
     <div class="edu-row">
@@ -165,11 +173,6 @@
     <div class="edu-degree">{{ education.degree }}</div>
     {% if education.coursework %}
     <div class="edu-honor-line"><strong>Relevant Coursework:</strong> {{ education.coursework | join(', ') }}</div>
-    {% endif %}
-    {% if honors_awards %}
-    {% for honor in honors_awards[:2] %}
-    <div class="edu-honor-line">• {{ honor.title }}, {{ honor.event }} ({{ honor.date }})</div>
-    {% endfor %}
     {% endif %}
 
     <!-- PROFESSIONAL EXPERIENCE -->
@@ -203,9 +206,13 @@
     </div>
     <div class="item-meta">Technologies: {{ project.technologies | join(', ') }}</div>
     <div style="margin-top: 2px; margin-bottom: 4px; padding-left: 12px;">
-        {% for bullet in project.bullets %}
-        <div style="font-size: 9.5pt; line-height: 1.4; margin-bottom: 1.5px; text-indent: -12px; padding-left: 12px;">• {{ bullet }}</div>
-        {% endfor %}
+        {% if project.bullets %}
+            {% for bullet in project.bullets %}
+            <div style="font-size: 9.5pt; line-height: 1.4; margin-bottom: 1.5px; text-indent: -12px; padding-left: 12px;">• {{ bullet }}</div>
+            {% endfor %}
+        {% elif project.description %}
+            <div style="font-size: 9.5pt; line-height: 1.4; margin-bottom: 1.5px; text-indent: -12px; padding-left: 12px;">• {{ project.description }}</div>
+        {% endif %}
     </div>
     {% endfor %}
 
