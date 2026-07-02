@@ -19,9 +19,9 @@ from scripts.db_client import (
 
 import html
 
-def send_telegram_notification(to_email: str, subject: str, body_content: str, attachment_name: str = None):
+def send_telegram_notification(to_email: str, subject: str, body_content: str, pdf_data: bytes = None):
     """
-    Forwards a copy of the sent email metadata and body to Telegram.
+    Forwards a copy of the sent email metadata and body to Telegram, along with the PDF attachment if present.
     """
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
@@ -34,8 +34,8 @@ def send_telegram_notification(to_email: str, subject: str, body_content: str, a
     text_message = f"✉️ <b>New Outreach Email Sent!</b>\n\n" \
                    f"<b>To:</b> {to_email}\n" \
                    f"<b>Subject:</b> {subject}\n"
-    if attachment_name:
-        text_message += f"<b>Attachment:</b> {attachment_name}\n"
+    if pdf_data:
+        text_message += f"<b>Attachment:</b> Aman_Amarjit_Resume.pdf\n"
     text_message += f"\n<b>Body:</b>\n{escaped_body}"
     
     # Trim to stay within Telegram 4096 character limit
@@ -50,7 +50,22 @@ def send_telegram_notification(to_email: str, subject: str, body_content: str, a
     try:
         httpx.post(url, json=payload, timeout=10)
     except Exception as e:
-        logger.warning(f"Failed to send Telegram notification: {e}")
+        logger.warning(f"Failed to send Telegram text notification: {e}")
+        
+    # If pdf_data is present, upload the document as a file
+    if pdf_data:
+        doc_url = f"https://api.telegram.org/bot{token}/sendDocument"
+        files = {
+            "document": ("Aman_Amarjit_Resume.pdf", pdf_data, "application/pdf")
+        }
+        data = {
+            "chat_id": chat_id,
+            "caption": f"📄 Tailored Resume PDF for {to_email}"
+        }
+        try:
+            httpx.post(doc_url, data=data, files=files, timeout=20)
+        except Exception as e:
+            logger.warning(f"Failed to send PDF document to Telegram: {e}")
 
 @retry_api_call
 def send_resend_email(to_email: str, subject: str, html_content: str, pdf_data: bytes = None) -> str:
@@ -273,8 +288,8 @@ Seeking AI/Backend Internships (Summer/Fall 2026)
                 send_id = send_resend_email(email, subject, email_body, pdf_data=pdf_data)
                 logger.info(f"Email sent successfully. Resend ID: {send_id}")
                 
-                # Send copy to Telegram
-                send_telegram_notification(email, subject, email_body, "Aman_Amarjit_Resume.pdf" if pdf_data else None)
+                # Send copy to Telegram (including PDF file)
+                send_telegram_notification(email, subject, email_body, pdf_data=pdf_data)
                 
                 now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 supabase.table("applications").update({"status": "sent", "sent_at": now_iso}).eq("id", app_id).execute()
