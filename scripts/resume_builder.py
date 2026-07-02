@@ -79,25 +79,28 @@ Please select up to {limit_projects_count} projects and tailor the resume fields
 
     api_key = os.getenv("GROQ_API_KEY")
     if api_key:
-        from groq import Groq
-        client = Groq(api_key=api_key)
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": RESUME_BUILDER_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1,
-            response_format={"type": "json_object"}
-        )
-        return json.loads(chat_completion.choices[0].message.content)
+        try:
+            from groq import Groq
+            client = Groq(api_key=api_key)
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": RESUME_BUILDER_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                model="llama-3.3-70b-versatile",
+                temperature=0.1,
+                response_format={"type": "json_object"}
+            )
+            return json.loads(chat_completion.choices[0].message.content)
+        except Exception as e:
+            logger.warning(f"Groq resume building failed: {e}. Falling back to Gemini.")
     
     # Fallback to Gemini
     gemini_key = os.getenv("GEMINI_API_KEY")
     if gemini_key:
         import google.generativeai as genai
         genai.configure(api_key=gemini_key)
-        model = genai.GenerativeModel('gemini-1.5-flash', generation_config={"response_mime_type": "application/json"})
+        model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
         response = model.generate_content([RESUME_BUILDER_SYSTEM_PROMPT, prompt])
         return json.loads(response.text)
 

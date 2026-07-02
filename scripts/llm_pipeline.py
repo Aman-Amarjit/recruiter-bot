@@ -34,9 +34,10 @@ CRITICAL INSTRUCTIONS:
 9. FOOTER: Do NOT include a signature block or physical address (these are appended automatically by the sender).
 10. Return BOTH a personalized, natural subject line and the email body. The output MUST start with "Subject: " on the very first line, followed by the subject line, then a blank line, and then the email body. Do not include markdown formatting or quotes around it.
 11. SALUTATION: Always begin with a professional greeting on its own line. Use the contact's name if available (e.g. "Hi [Name],"). If the contact's name is not available or is generic, address the team or department specifically based on the company and role (e.g. "Hi Google AI/ML Team," or "Hello Google Engineering Team,"). Never use generic greetings like "Hi there".
-12. INTRODUCTION: Immediately after the salutation, include one concise sentence introducing yourself: your name, and that you are a B.Tech CSE student at IGIT Sarang. Example: "I'm Aman Amarjit — a second-year B.Tech CSE student at IGIT Sarang."
-13. RESUME ATTACHMENT: State clearly that you have attached your tailored resume to the email (e.g., "I've attached my tailored resume to this email.") instead of linking to URLs.
+12. INTRODUCTION: Immediately after the salutation, include one concise sentence introducing yourself: your name, and that you are a B.Tech CSE student at IGIT Sarang. Example: "I am Aman Amarjit — a second-year B.Tech CSE student at IGIT Sarang."
+13. RESUME ATTACHMENT: State clearly that you have attached your tailored resume to the email (e.g., "I have attached my tailored resume to this email.") instead of linking to URLs.
 14. SINGLE PROJECT FOCUS: Focus on exactly ONE highly relevant project from your Profile instead of listing multiple names. Describe this project with one concise sentence highlighting a concrete outcome (what you built, what it achieved, and the key technologies used).
+15. FORMAL TONE: The tone MUST be polite, respectful, and professional. Avoid overly casual language, contractions (e.g., write "I am" instead of "I'm", "I have" instead of "I've", "do not" instead of "don't"), or slang. Ensure the email reads as a polished, formal business inquiry.
 """
 
 
@@ -49,6 +50,7 @@ Evaluate the following factors:
 1. TRUTHFULNESS: Check if all technologies, projects, and claims in the email and resume selection exist in the Candidate Profile. Fail if anything is fabricated.
 2. SPAM TRIGGERS: Check for generic template phrases, clickbaity headlines, or over-the-top sales language.
 3. GENERICNESS: Score how specific and tailored the pitch is to the job description (10 is highly tailored, 1 is generic).
+4. FORMAL TONE: Verify that the email maintains a highly professional, formal business tone and does not use informal contractions (like "I'm", "I've", "don't").
 
 Return a JSON object:
 {
@@ -80,17 +82,20 @@ Write a cold outreach email directly as Aman seeking an internship at {company}.
 """
     api_key = os.getenv("GROQ_API_KEY")
     if api_key:
-        from groq import Groq
-        client = Groq(api_key=api_key)
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": EMAIL_DRAFTER_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-            temperature=0.7
-        )
-        return chat_completion.choices[0].message.content.strip()
+        try:
+            from groq import Groq
+            client = Groq(api_key=api_key)
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": EMAIL_DRAFTER_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                model="llama-3.3-70b-versatile",
+                temperature=0.7
+            )
+            return chat_completion.choices[0].message.content.strip()
+        except Exception as e:
+            logger.warning(f"Groq email drafting failed: {e}. Falling back to Gemini.")
         
     # Fallback to Gemini
     gemini_key = os.getenv("GEMINI_API_KEY")
@@ -122,18 +127,21 @@ Rate and critique the assets according to the system instructions. Return strict
 """
     api_key = os.getenv("GROQ_API_KEY")
     if api_key:
-        from groq import Groq
-        client = Groq(api_key=api_key)
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": CRITIQUE_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.1-8b-instant", # Use lighter model for critique to save 70b limits
-            temperature=0.1,
-            response_format={"type": "json_object"}
-        )
-        return json.loads(chat_completion.choices[0].message.content)
+        try:
+            from groq import Groq
+            client = Groq(api_key=api_key)
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": CRITIQUE_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                model="llama-3.1-8b-instant", # Use lighter model for critique to save 70b limits
+                temperature=0.1,
+                response_format={"type": "json_object"}
+            )
+            return json.loads(chat_completion.choices[0].message.content)
+        except Exception as e:
+            logger.warning(f"Groq combined critique failed: {e}. Falling back to Gemini.")
         
     gemini_key = os.getenv("GEMINI_API_KEY")
     if gemini_key:
