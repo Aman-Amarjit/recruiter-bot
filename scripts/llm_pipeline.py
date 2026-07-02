@@ -61,7 +61,7 @@ Return a JSON object:
 """
 
 @retry_api_call
-def draft_cold_email(job_title: str, company: str, job_description: str, domain_tag: str) -> str:
+def draft_cold_email(job_title: str, company: str, job_description: str, domain_tag: str, recruiter_name: str = None) -> str:
     """
     Calls the LLM (Groq with Gemini fallback) to draft a tailored cold email.
     """
@@ -69,6 +69,7 @@ def draft_cold_email(job_title: str, company: str, job_description: str, domain_
     
     prompt = f"""
 Candidate Name: {CANDIDATE_PROFILE['name']}
+Recruiter Name: {recruiter_name or 'N/A'}
 Candidate Context: Second-year B.Tech Computer Science & Engineering student at Indira Gandhi Institute of Technology (IGIT), Sarang (Class of 2029). Focusing on AI/ML and systems engineering — recently completed a full-stack analytics engine contract project for a client in Canada.
 Candidate Profile (domain-specific): {json.dumps(domain_profile, indent=2)}
 
@@ -78,7 +79,9 @@ Company: {company}
 Description:
 {job_description}
 
-Write a cold outreach email directly as Aman seeking an internship at {company}. Be specific about the company and role. Follow all system instructions exactly.
+Write a cold outreach email directly as Aman seeking an internship at {company}.
+If Recruiter Name is provided and not 'N/A', address the recruiter by name in the greeting salutation (e.g., "Hi [Recruiter Name],"). Otherwise, address the specific team (e.g., "Hi Google Engineering Team,").
+Be specific about the company and role. Follow all system instructions exactly.
 """
     api_key = os.getenv("GROQ_API_KEY")
     if api_key:
@@ -170,7 +173,8 @@ def process_application(app):
     
     # 1. Draft tailored email
     try:
-        email_body = draft_cold_email(job_title, company, job_description, domain_tag)
+        recruiter_name = contact.get("name")
+        email_body = draft_cold_email(job_title, company, job_description, domain_tag, recruiter_name=recruiter_name)
     except Exception as e:
         logger.error(f"Email drafting failed for App {app_id}: {e}")
         supabase.table("applications").update({"status": "failed"}).eq("id", app_id).execute()
