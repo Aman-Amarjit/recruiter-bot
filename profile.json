@@ -24,7 +24,7 @@
       "bullets": [
         "Engineered a scalable multi-layer analytics engine for a Canada-based fintech client, improving API response times by 35% using optimized REST endpoints.",
         "Developed a modular Single Page Application using React and Node.js, ensuring strict data contracts and clean separation of concerns for a 40% reduction in maintenance overhead.",
-        "Designed an asynchronous analytical dashboard capable of rendering complex datasets (confidence envelopes, deep data maps) without UI thread blocking, handling up to 10k data points in real time.",
+        "Developed a non-blocking UI rendering loop using requestAnimationFrame, optimizing the rendering of dense datasets (deep data maps, prediction envelopes) to maintain a steady 60 FPS under heavy data updates.",
         "Managed international async project milestones, contract SLAs, and independent code deployment workflows on render/Docker environments."
       ]
     }
@@ -79,7 +79,7 @@
         {
           "name": "xtrace-sdk",
           "github_url": "https://github.com/aman-amarjit/xtrace-sdk",
-          "description": "Open-source SDK for distributed tracing and observability in networked applications.",
+          "description": "Distributed tracing SDK utilizing context propagation (HTTP headers) and async event hooks to collect trace spans from remote services, forwarding structured trace logs to a centralized collector.",
           "technologies": ["Python", "Docker", "Subprocess Management"]
         }
       ]
@@ -129,25 +129,10 @@
   },
   "certifications": [
     {
-      "name": "Connect and Protect: Networks and Network Security",
-      "issuer": "Google (via Coursera)",
+      "name": "Google Cybersecurity Professional Certificate",
+      "issuer": "Coursera",
       "issue_date": "Feb 2026",
-      "credential_id": "FGKICSA9RMCH",
-      "skills": ["Network Architecture", "Internet Protocol Suite (TCP/IP)", "Firewalls", "VPNs", "System Hardening", "Intrusion Detection"]
-    },
-    {
-      "name": "Play It Safe: Manage Security Risks",
-      "issuer": "Google (via Coursera)",
-      "issue_date": "Oct 2025",
-      "credential_id": "GFQ52VBV8IMG",
-      "skills": ["Risk Assessment", "SIEM Tools", "Security Auditing"]
-    },
-    {
-      "name": "Foundations of Cybersecurity",
-      "issuer": "Google (via Coursera)",
-      "issue_date": "Sep 2025",
-      "credential_id": "JIPUZPQ1RTAM",
-      "skills": ["Cybersecurity Fundamentals"]
+      "skills": ["Network Security", "Risk Assessment", "SIEM Tools", "Firewalls", "System Hardening", "Intrusion Detection", "Distributed Tracing"]
     },
     {
       "name": "Certificate of Participation: AI for Students - Build Your Own Generative AI Model",

@@ -38,6 +38,7 @@ CRITICAL CONSTRAINTS:
 2. SELECTION: Select the 3 most relevant projects from the candidate's profile.
 3. BULLETS: Rephrase the description bullets of the selected projects to emphasize the technologies and methodologies requested in the job description. Start every bullet with a strong action verb. You may include the metrics from the candidate profile, but never invent any numbers or metrics.
 4. FORMAT: Return ONLY a valid JSON object matching the requested schema. No markdown formatting blocks outside the JSON.
+5. SUMMARY ALIGNMENT: The generated summary MUST align truthfully and proportionally with the candidate's actual background. Frame the candidate as a B.Tech Computer Science student focusing on systems, AI, or security, with practical full-stack software development contract experience. Do NOT claim the candidate is a professional 'cybersecurity specialist' or 'AI engineer'; instead, emphasize their academic research, software engineering base, and tracing/audit projects.
 
 JSON Schema Output:
 {
