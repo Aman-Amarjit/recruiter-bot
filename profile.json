@@ -1,6 +1,6 @@
 {
   "name": "Aman Amarjit",
-  "title": "Independent Software Developer & Freelancer",
+  "title": "B.Tech Computer Science & Engineering Student",
   "city": "Dhenkanal, Odisha, India",
   "education": {
     "degree": "Bachelor of Technology in Computer Science & Engineering",
@@ -16,13 +16,13 @@
   },
   "experience": [
     {
-      "role": "Freelance Full-Stack Developer",
-      "company": "Freelance",
+      "role": "Full-Stack Software Developer",
+      "company": "Contract Project",
       "location": "Remote",
       "start_date": "Feb 2026",
       "end_date": "Present",
       "bullets": [
-        "Delivered a full-stack freelance project for a client based in Canada, managing the complete workflow from client requirements through to deployment.",
+        "Delivered a full-stack software project for a client based in Canada, managing the complete workflow from requirements through to deployment.",
         "Built the complete API layer, frontend, and backend architecture for an advanced, multi-layer analytics engine.",
         "Engineered the core API layer with a clean REST-style communication model and strict, well-defined data contracts across both ends of the stack.",
         "Built a highly modular Single Page Application with a focus on scalability and maintainability, ensuring clean separation of concerns.",

@@ -206,17 +206,13 @@ def process_send_queue():
 <br><br>
 ---<br>
 Aman Amarjit<br>
-B.Tech Computer Science Student &amp; Freelance Developer<br>
+B.Tech Computer Science &amp; Engineering Student<br>
 Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
-Seeking AI/Backend Internships (Summer/Fall 2026)<br>
-<br>
-<font size="1" color="#888888">
-PS: If this isn't the right channel or you'd prefer not to receive any follow-up, please let me know and I will note it.
-</font>
+Seeking AI/Backend Internships (Summer/Fall 2026)
 """
         email_body = f"{app['email_body']}{signature_footer}"
-        subject = f"Freelance Collaboration / Internship - {role_title}"
+        subject = f"Internship Inquiry - {role_title}"
         
         # 4. Dispatch Email
         if send_disabled:

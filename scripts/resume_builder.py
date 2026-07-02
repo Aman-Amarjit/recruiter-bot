@@ -30,7 +30,7 @@ with open(PROFILE_PATH, "r") as f:
 
 # System prompt for LLM tailoring
 RESUME_BUILDER_SYSTEM_PROMPT = """
-You are an expert resume developer specialized in ATS optimization for freelance developers.
+You are an expert resume developer specialized in ATS optimization for student internship resumes.
 Your job is to customize the candidate's projects and skills based on the provided job description.
 
 CRITICAL CONSTRAINTS:
@@ -182,6 +182,15 @@ def render_resume_to_pdf(resume_data: dict, output_path: str):
     with open(template_path, "r") as f:
         html_template = Template(f.read())
         
+    projects = resume_data.get("selected_projects") or []
+    for proj in projects:
+        proj_name = proj.get("name")
+        for domain_tag, domain in CANDIDATE_PROFILE.get("domains", {}).items():
+            for p in domain.get("projects", []):
+                if p.get("name") == proj_name:
+                    proj["github_url"] = p.get("github_url")
+                    break
+
     rendered_html = html_template.render(
         name=CANDIDATE_PROFILE["name"],
         city=CANDIDATE_PROFILE["city"],
@@ -194,7 +203,7 @@ def render_resume_to_pdf(resume_data: dict, output_path: str):
         honors_awards=CANDIDATE_PROFILE.get("honors_awards", []),
         summary=resume_data.get("summary"),
         skills=resume_data.get("skills"),
-        projects=resume_data.get("selected_projects")
+        projects=projects
     )
     
     if WEASYPRINT_AVAILABLE:

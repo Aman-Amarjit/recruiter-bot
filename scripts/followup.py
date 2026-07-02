@@ -15,12 +15,12 @@ from scripts.llm_pipeline import CANDIDATE_PROFILE, run_combined_critique
 
 # Follow-up email template / system prompt
 FOLLOWUP_SYSTEM_PROMPT = """
-You are drafting a polite, brief cold email follow-up for an independent software developer.
+You are drafting a polite, brief cold email follow-up for a B.Tech Computer Science student seeking an internship.
 
 CONSTRAINTS:
 1. BREVITY: Keep it extremely short (30 to 50 words).
-2. TONE: Professional, helpful, and non-intrusive. Just checking in on the previous proposal.
-3. FREELANCER STYLE: Frame candidate as an Independent Freelancer. Never mention agency names.
+2. TONE: Professional, helpful, and non-intrusive. Just checking in on the previous internship inquiry.
+3. STUDENT STYLE: Frame candidate as a B.Tech Computer Science student. Never mention agency or freelance branding names.
 4. NO attachments reference.
 5. Return ONLY the raw draft content in your response. No formatting wrappers.
 """
@@ -130,17 +130,13 @@ def check_and_send_followups():
 <br><br>
 ---<br>
 Aman Amarjit<br>
-B.Tech Computer Science Student &amp; Freelance Developer<br>
+B.Tech Computer Science &amp; Engineering Student<br>
 Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
-Seeking AI/Backend Internships (Summer/Fall 2026)<br>
-<br>
-<font size="1" color="#888888">
-PS: If this isn't the right channel or you'd prefer not to receive any follow-up, please let me know and I will note it.
-</font>
+Seeking AI/Backend Internships (Summer/Fall 2026)
 """
         full_followup_body = f"{followup_body}{signature_footer}"
-        subject = f"Follow-up: Freelance Collaboration / Internship - {role_title}"
+        subject = f"Follow-up: Internship Inquiry - {role_title}"
         
         # 5. Dispatch
         if send_disabled:

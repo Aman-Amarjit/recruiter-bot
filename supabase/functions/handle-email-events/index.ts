@@ -74,8 +74,8 @@ serve(async (req: Request) => {
       <body>
         <div class="card">
           <h2>Opt-Out Complete</h2>
-          <p>The email address <strong>${email}</strong> has been successfully removed from Aman Amarjit's freelancer outreach list.</p>
-          <p>You will not receive any further automated internship or freelance proposal emails.</p>
+          <p>The email address <strong>${email}</strong> has been successfully removed from Aman Amarjit's outreach list.</p>
+          <p>You will not receive any further automated internship inquiry emails.</p>
         </div>
       </body>
       </html>

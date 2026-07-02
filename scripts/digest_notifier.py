@@ -208,7 +208,7 @@ def main():
     
     # 3. Assemble HTML Digest Message
     digest_msg = f"""
-📈 <b>Freelancer Outreach Daily Digest</b>
+📈 <b>Internship Outreach Daily Digest</b>
 Date: {datetime.date.today().strftime('%Y-%m-%d')}
 
 📊 <b>Conversion Funnel (Last 24h):</b>
