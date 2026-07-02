@@ -23,6 +23,7 @@ CONSTRAINTS:
 3. STUDENT STYLE: Frame candidate as a B.Tech Computer Science student. Never mention agency or freelance branding names.
 4. NO attachments reference.
 5. Return ONLY the raw draft content in your response. No formatting wrappers.
+6. FORMAL TONE: Maintain a strictly formal, respectful tone. Avoid and discard all contractions (such as "I'm", "I've", "I'd", "don't"). Write all words fully (e.g., use "I am", "I have").
 """
 
 @retry_api_call
@@ -40,17 +41,20 @@ Draft a polite follow-up matching the instructions.
 """
     api_key = os.getenv("GROQ_API_KEY")
     if api_key:
-        from groq import Groq
-        client = Groq(api_key=api_key)
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": FOLLOWUP_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.1-8b-instant",
-            temperature=0.7
-        )
-        return chat_completion.choices[0].message.content.strip()
+        try:
+            from groq import Groq
+            client = Groq(api_key=api_key)
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": FOLLOWUP_SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                model="llama-3.1-8b-instant",
+                temperature=0.7
+            )
+            return chat_completion.choices[0].message.content.strip()
+        except Exception as e:
+            logger.warning(f"Groq follow-up drafting failed: {e}. Falling back to Gemini.")
         
     gemini_key = os.getenv("GEMINI_API_KEY")
     if gemini_key:
