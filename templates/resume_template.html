@@ -156,14 +156,6 @@
         </div>
     </div>
 
-    <!-- SUMMARY -->
-    {% if summary %}
-    <div class="section-header">Professional Summary</div>
-    <div class="skills-block" style="margin-top: 3px; line-height: 1.4;">
-        {{ summary }}
-    </div>
-    {% endif %}
-
     <!-- EDUCATION -->
     <div class="section-header">Education</div>
     <div class="edu-row">
@@ -179,10 +171,6 @@
     <div class="edu-honor-line">• {{ honor.title }}, {{ honor.event }} ({{ honor.date }})</div>
     {% endfor %}
     {% endif %}
-
-    <!-- CORE SKILLS -->
-    <div class="section-header">Core Skills</div>
-    <div class="skills-block">{{ skills }}</div>
 
     <!-- PROFESSIONAL EXPERIENCE -->
     {% if experience %}
@@ -220,6 +208,10 @@
         {% endfor %}
     </div>
     {% endfor %}
+
+    <!-- CORE SKILLS -->
+    <div class="section-header">Core Skills</div>
+    <div class="skills-block">{{ skills }}</div>
 
     <!-- CERTIFICATIONS -->
     {% if certifications %}
