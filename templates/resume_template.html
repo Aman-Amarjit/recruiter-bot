@@ -154,6 +154,13 @@
             <span class="contact-sep">·</span>
             <a href="{{ links.linkedin }}">{{ links.linkedin | replace('https://', '') }}</a>
         </div>
+        {% if phone or location %}
+        <div class="contact-line" style="margin-top: 2px;">
+            {% if phone %}📞 {{ phone }}{% endif %}
+            {% if phone and location %}<span class="contact-sep">·</span>{% endif %}
+            {% if location %}📍 {{ location }}{% endif %}
+        </div>
+        {% endif %}
     </div>
 
     <!-- SUMMARY -->

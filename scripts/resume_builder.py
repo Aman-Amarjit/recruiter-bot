@@ -199,6 +199,8 @@ def render_resume_to_pdf(resume_data: dict, output_path: str):
     rendered_html = html_template.render(
         name=CANDIDATE_PROFILE["name"],
         city=CANDIDATE_PROFILE["city"],
+        phone=CANDIDATE_PROFILE.get("phone", ""),
+        location=CANDIDATE_PROFILE.get("location", ""),
         email=os.getenv("RESEND_SENDER_EMAIL", "applications@yourdomain.com"),
         links=CANDIDATE_PROFILE["links"],
         education=CANDIDATE_PROFILE["education"],
