@@ -108,11 +108,11 @@ def query_google_cse_for_emails(company_name: str, domain: str) -> list:
 def query_hunter_api(company_name: str, domain: str) -> tuple:
     """
     Queries Hunter.io API for the company domain.
-    Returns (email, confidence_score) or (None, 0.0)
+    Returns (email, confidence_score, name) or (None, 0.0, None)
     """
     api_key = os.getenv("HUNTER_API_KEY")
     if not api_key:
-        return None, 0.0
+        return None, 0.0, None
         
     url = f"https://api.hunter.io/v2/domain-search?domain={domain}&api_key={api_key}"
     response = httpx.get(url, timeout=15)
@@ -124,26 +124,31 @@ def query_hunter_api(company_name: str, domain: str) -> tuple:
         # Get the first verified email or the one with the highest confidence
         best_email = None
         best_confidence = 0.0
+        best_name = None
         
         for item in emails:
             email_val = item.get("value")
             confidence = float(item.get("confidence", 0)) / 100.0
+            first_name = item.get("first_name")
+            last_name = item.get("last_name")
+            name_val = f"{first_name} {last_name}".strip() if (first_name or last_name) else None
             
             # SMTP verified check
             verification = item.get("verification", {})
             status = verification.get("status")
             
             if status == "deliverable":
-                return email_val, 0.8
+                return email_val, 0.8, name_val
             if confidence > best_confidence:
                 best_email = email_val
                 best_confidence = confidence
+                best_name = name_val
                 
         if best_email:
             # Map Hunter.io confidence to our standard (0.8 max)
-            return best_email, min(0.8, best_confidence)
+            return best_email, min(0.8, best_confidence), best_name
             
-    return None, 0.0
+    return None, 0.0, None
 
 def verify_email_domain_has_mx(email: str) -> bool:
     """
@@ -180,6 +185,7 @@ def enrich_listing(listing):
     
     email = None
     confidence = 0.0
+    name = None
     
     # 3. Try scraping search engine snippets for emails (Confidence = 1.0)
     try:
@@ -194,12 +200,11 @@ def enrich_listing(listing):
         logger.warning(f"Google CSE email extraction failed: {e}")
         
     # 4. Try Hunter.io API (Confidence = 0.8 max, limit to 1 call per daily pipeline run)
-    # We check if we already queried Hunter today in this execution window using global caching
     if not email and os.getenv("HUNTER_API_KEY"):
         try:
-            email, confidence = query_hunter_api(company, domain)
+            email, confidence, name = query_hunter_api(company, domain)
             if email:
-                logger.info(f"Email found via Hunter.io: {email} (Confidence: {confidence})")
+                logger.info(f"Email found via Hunter.io: {email} (Confidence: {confidence}, Name: {name})")
         except Exception as e:
             logger.warning(f"Hunter.io API domain search failed: {e}")
             
@@ -225,6 +230,7 @@ def enrich_listing(listing):
             contact_res = supabase.table("contacts").upsert({
                 "company": company,
                 "email": email,
+                "name": name,
                 "source": listing["source"],
                 "confidence": confidence,
                 "status": "completed",

@@ -10,7 +10,7 @@ from scripts.db_client import (
     retry_api_call,
     logger
 )
-from scripts.sender import send_resend_email
+from scripts.sender import send_resend_email, send_telegram_notification
 from scripts.llm_pipeline import CANDIDATE_PROFILE, run_combined_critique
 
 # Follow-up email template / system prompt
@@ -135,8 +135,14 @@ Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
 Seeking AI/Backend Internships (Summer/Fall 2026)
 """
-        full_followup_body = f"{followup_body}{signature_footer}"
-        subject = f"Follow-up: Internship Inquiry - {role_title}"
+        raw_followup = followup_body.strip()
+        if raw_followup.startswith("Subject:"):
+            parts = raw_followup.split("\n", 1)
+            subject = parts[0].replace("Subject:", "").strip()
+            full_followup_body = f"{parts[1].strip()}{signature_footer}"
+        else:
+            subject = f"Follow-up: Internship Inquiry - {role_title}"
+            full_followup_body = f"{raw_followup}{signature_footer}"
         
         # 5. Dispatch
         if send_disabled:
@@ -150,6 +156,9 @@ Seeking AI/Backend Internships (Summer/Fall 2026)
             try:
                 send_id = send_resend_email(email, subject, full_followup_body)
                 logger.info(f"Follow-up dispatched. Resend ID: {send_id}")
+                
+                # Send copy to Telegram
+                send_telegram_notification(email, subject, full_followup_body)
                 
                 now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 supabase.table("applications").update({

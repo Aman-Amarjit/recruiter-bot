@@ -30,12 +30,13 @@ CRITICAL INSTRUCTIONS:
    - "Please find my attached resume"
    - "I wanted to reach out"
    - Any agency, freelancer branding, or brand names (like "Reshape The Algorithm" or "RTA")
-8. NATURAL CTA: End with a specific, low-pressure ask — offer to share your portfolio, hop on a short call, or show a relevant project demo.
+8. NATURAL CTA: End with a specific, low-commitment ask. Offer to share a portfolio link or say "Happy to share more if there's interest." Never ask to schedule or hop on a call.
 9. FOOTER: Do NOT include a signature block or physical address (these are appended automatically by the sender).
-10. Return ONLY the raw email body text. No markdown, no notes, no subject line.
+10. Return BOTH a personalized, natural subject line and the email body. The output MUST start with "Subject: " on the very first line, followed by the subject line, then a blank line, and then the email body. Do not include markdown formatting or quotes around it.
 11. SALUTATION: Always begin with a professional greeting on its own line. Use the contact's name if available (e.g. "Hi [Name],"). If the contact's name is not available or is generic, address the team or department specifically based on the company and role (e.g. "Hi Google AI/ML Team," or "Hello Google Engineering Team,"). Never use generic greetings like "Hi there".
 12. INTRODUCTION: Immediately after the salutation, include one concise sentence introducing yourself: your name, and that you are a B.Tech CSE student at IGIT Sarang. Example: "I'm Aman Amarjit — a second-year B.Tech CSE student at IGIT Sarang."
 13. RESUME ATTACHMENT: State clearly that you have attached your tailored resume to the email (e.g., "I've attached my tailored resume to this email.") instead of linking to URLs.
+14. SINGLE PROJECT FOCUS: Focus on exactly ONE highly relevant project from your Profile instead of listing multiple names. Describe this project with one concise sentence highlighting a concrete outcome (what you built, what it achieved, and the key technologies used).
 """
 
 

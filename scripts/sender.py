@@ -17,6 +17,41 @@ from scripts.db_client import (
     logger
 )
 
+import html
+
+def send_telegram_notification(to_email: str, subject: str, body_content: str, attachment_name: str = None):
+    """
+    Forwards a copy of the sent email metadata and body to Telegram.
+    """
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return
+        
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    
+    escaped_body = html.escape(body_content)
+    text_message = f"✉️ <b>New Outreach Email Sent!</b>\n\n" \
+                   f"<b>To:</b> {to_email}\n" \
+                   f"<b>Subject:</b> {subject}\n"
+    if attachment_name:
+        text_message += f"<b>Attachment:</b> {attachment_name}\n"
+    text_message += f"\n<b>Body:</b>\n{escaped_body}"
+    
+    # Trim to stay within Telegram 4096 character limit
+    if len(text_message) > 4000:
+        text_message = text_message[:3970] + "\n...[message truncated]"
+        
+    payload = {
+        "chat_id": chat_id,
+        "text": text_message,
+        "parse_mode": "HTML"
+    }
+    try:
+        httpx.post(url, json=payload, timeout=10)
+    except Exception as e:
+        logger.warning(f"Failed to send Telegram notification: {e}")
+
 @retry_api_call
 def send_resend_email(to_email: str, subject: str, html_content: str, pdf_data: bytes = None) -> str:
     """
@@ -211,8 +246,14 @@ Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
 Seeking AI/Backend Internships (Summer/Fall 2026)
 """
-        email_body = f"{app['email_body']}{signature_footer}"
-        subject = f"Internship Inquiry - {role_title}"
+        raw_body = app['email_body']
+        if raw_body.strip().startswith("Subject:"):
+            parts = raw_body.split("\n", 1)
+            subject = parts[0].replace("Subject:", "").strip()
+            email_body = f"{parts[1].strip()}{signature_footer}"
+        else:
+            subject = f"Internship Inquiry - {role_title}"
+            email_body = f"{raw_body.strip()}{signature_footer}"
         
         # 4. Dispatch Email
         if send_disabled:
@@ -231,6 +272,9 @@ Seeking AI/Backend Internships (Summer/Fall 2026)
                 logger.info(f"Sending email to {email} for {role_title}...")
                 send_id = send_resend_email(email, subject, email_body, pdf_data=pdf_data)
                 logger.info(f"Email sent successfully. Resend ID: {send_id}")
+                
+                # Send copy to Telegram
+                send_telegram_notification(email, subject, email_body, "Aman_Amarjit_Resume.pdf" if pdf_data else None)
                 
                 now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 supabase.table("applications").update({"status": "sent", "sent_at": now_iso}).eq("id", app_id).execute()
