@@ -148,11 +148,11 @@
         <div class="contact-line">
             ✉ <a href="mailto:{{ email }}">{{ email }}</a>
             <span class="contact-sep">·</span>
-            <a href="{{ links.portfolio }}">Portfolio</a>
+            <a href="{{ links.portfolio }}">{{ links.portfolio | replace('https://', '') }}</a>
             <span class="contact-sep">·</span>
-            <a href="{{ links.github }}">GitHub</a>
+            <a href="{{ links.github }}">{{ links.github | replace('https://', '') }}</a>
             <span class="contact-sep">·</span>
-            <a href="{{ links.linkedin }}">LinkedIn</a>
+            <a href="{{ links.linkedin }}">{{ links.linkedin | replace('https://', '') }}</a>
         </div>
     </div>
 
