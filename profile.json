@@ -5,7 +5,14 @@
   "education": {
     "degree": "Bachelor of Technology in Computer Science & Engineering",
     "institution": "Indira Gandhi Institute of Technology (IGIT), Sarang",
-    "graduation_year": 2029
+    "graduation_year": 2029,
+    "coursework": [
+      "Data Structures & Algorithms",
+      "Object-Oriented Programming",
+      "Database Management Systems",
+      "Operating Systems",
+      "Computer Networks"
+    ]
   },
   "experience": [
     {
@@ -123,19 +130,6 @@
       "issue_date": "Feb 2026",
       "credential_id": "FGKICSA9RMCH",
       "skills": ["Network Architecture", "Internet Protocol Suite (TCP/IP)", "Firewalls", "VPNs", "System Hardening", "Intrusion Detection"]
-    },
-    {
-      "name": "Certificate of Completion (HTML)",
-      "issuer": "KnowledgeGate",
-      "issue_date": "Jan 2026",
-      "credential_id": "CERT-1768314359045-8069DC94",
-      "skills": ["HTML"]
-    },
-    {
-      "name": "Quadcopter - Building and Flying Workshop",
-      "issuer": "Makxenia Engineering Resource Pvt. Ltd. (in association with INNOVISION 2025, NIT Rourkela)",
-      "issue_date": "Nov 2025",
-      "skills": ["Robotics", "Quadcopter Design & Assembly", "UAV Aerodynamics", "BLDC Motors", "Flight Controllers"]
     },
     {
       "name": "Play It Safe: Manage Security Risks",

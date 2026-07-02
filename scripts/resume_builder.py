@@ -240,7 +240,7 @@ def build_tailored_resume(application_id: str, job_description: str, domain_tag:
         if supabase:
             supabase.table("applications").update({
                 "status": "resume_failed",
-                "critique_score": 0
+                "critique_score": None
             }).eq("id", application_id).execute()
         return None
         

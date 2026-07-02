@@ -23,7 +23,7 @@ CRITICAL INSTRUCTIONS:
 3. COMPANY-SPECIFIC: Mention the company or the role's domain by name. Show genuine interest in what they do and why you specifically want to work with them — not generically.
 4. STUDENT CONTEXT: You are a second-year B.Tech CSE student (graduating 2029, IGIT Sarang) who also does real freelance work. Lead with your actual work, not your student status.
 5. NO HALLUCINATION: Only use facts, projects, technologies, and skills present in the Candidate Profile. Never invent achievements, grades, or roles.
-6. CONCISE: Keep the email strictly between 70 to 120 words. Every sentence must earn its place.
+6. CONCISE: Keep the email strictly between 80 to 130 words. Every sentence must earn its place.
 7. FORBIDDEN PHRASES: Never use:
    - "I hope this email finds you well"
    - "I am writing to express my interest"
@@ -33,6 +33,9 @@ CRITICAL INSTRUCTIONS:
 8. NATURAL CTA: End with a specific, low-pressure ask — offer to share your portfolio, hop on a short call, or show a relevant project demo.
 9. FOOTER: Do NOT include a signature block or physical address (these are appended automatically by the sender).
 10. Return ONLY the raw email body text. No markdown, no notes, no subject line.
+11. SALUTATION: Always begin with a professional greeting on its own line. Use the contact's name if available (e.g. "Hi [Name],"). If the contact's name is not available or is generic, address the team or department specifically based on the company and role (e.g. "Hi Google AI/ML Team," or "Hello Google Engineering Team,"). Never use generic greetings like "Hi there".
+12. INTRODUCTION: Immediately after the salutation, include one concise sentence introducing yourself: your name, that you are a B.Tech CSE student, and that you do independent freelance development. Example: "I'm Aman Amarjit — a second-year B.Tech CSE student and independent software developer."
+13. RESUME ATTACHMENT: State clearly that you have attached your tailored resume to the email (e.g., "I've attached my tailored resume to this email.") instead of linking to URLs.
 """
 
 
@@ -174,12 +177,9 @@ def process_application(app):
     app_details = supabase.table("applications").select("*").eq("id", app_id).execute().data[0]
     resume_selection = app_details.get("resume_project_selection") or []
     
-    # Append resume link to email body for developer reference
-    email_body_with_link = f"{email_body}\n\nYou can review my tailored resume here: {resume_url}"
-    
     # 3. Consolidated Critique Gate check
     try:
-        critique = run_combined_critique(email_body_with_link, resume_selection, job_description)
+        critique = run_combined_critique(email_body, resume_selection, job_description)
         score = critique.get("score", 0)
         verifiable = critique.get("verifiable_check", False)
         reason = critique.get("reason", "No reason provided")
@@ -190,7 +190,7 @@ def process_application(app):
             # Succeeded & Approved
             supabase.table("applications").update({
                 "status": "approved",
-                "email_body": email_body_with_link,
+                "email_body": email_body,
                 "critique_score": score
             }).eq("id", app_id).execute()
             logger.info(f"Application {app_id} APPROVED.")
@@ -201,24 +201,23 @@ def process_application(app):
             
             # Re-draft
             email_retry = draft_cold_email(job_title, company, job_description, domain_tag)
-            email_retry_with_link = f"{email_retry}\n\nYou can review my tailored resume here: {resume_url}"
             
             # Re-critique
-            critique_retry = run_combined_critique(email_retry_with_link, resume_selection, job_description)
+            critique_retry = run_combined_critique(email_retry, resume_selection, job_description)
             score_retry = critique_retry.get("score", 0)
             verifiable_retry = critique_retry.get("verifiable_check", False)
             
             if score_retry >= 7 and verifiable_retry:
                 supabase.table("applications").update({
                     "status": "approved",
-                    "email_body": email_retry_with_link,
+                    "email_body": email_retry,
                     "critique_score": score_retry
                 }).eq("id", app_id).execute()
                 logger.info(f"Application {app_id} APPROVED after retry.")
             else:
                 supabase.table("applications").update({
                     "status": "held",
-                    "email_body": email_retry_with_link,
+                    "email_body": email_retry,
                     "critique_score": score_retry
                 }).eq("id", app_id).execute()
                 logger.warning(f"Application {app_id} HELD after retry failure (Score: {score_retry}).")
@@ -226,7 +225,7 @@ def process_application(app):
             # Score < 4 or unverifiable claims detected
             supabase.table("applications").update({
                 "status": "held",
-                "email_body": email_body_with_link,
+                "email_body": email_body,
                 "critique_score": score
             }).eq("id", app_id).execute()
             logger.warning(f"Application {app_id} HELD (Score: {score}, Verifiable: {verifiable}).")
@@ -236,7 +235,7 @@ def process_application(app):
         # Save as drafted but held for safety
         supabase.table("applications").update({
             "status": "held",
-            "email_body": email_body_with_link,
+            "email_body": email_body,
             "critique_score": 1
         }).eq("id", app_id).execute()
 

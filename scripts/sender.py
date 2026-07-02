@@ -18,7 +18,7 @@ from scripts.db_client import (
 )
 
 @retry_api_call
-def send_resend_email(to_email: str, subject: str, html_content: str) -> str:
+def send_resend_email(to_email: str, subject: str, html_content: str, pdf_data: bytes = None) -> str:
     """
     Dispatches email using SMTP (Gmail) if configured, otherwise falls back to Resend API.
     """
@@ -26,13 +26,22 @@ def send_resend_email(to_email: str, subject: str, html_content: str) -> str:
     smtp_password = os.getenv("SMTP_PASSWORD")
     
     if smtp_email and smtp_password:
-        msg = MIMEMultipart("alternative")
+        msg = MIMEMultipart("mixed")  # Use mixed to support attachments along with alternative HTML
         msg["Subject"] = subject
         msg["From"] = smtp_email
         msg["To"] = to_email
         
         # Attach HTML
-        msg.attach(MIMEText(html_content, "html"))
+        alternative = MIMEMultipart("alternative")
+        alternative.attach(MIMEText(html_content, "html"))
+        msg.attach(alternative)
+        
+        # Attach PDF if present
+        if pdf_data:
+            from email.mime.application import MIMEApplication
+            part = MIMEApplication(pdf_data, Name="Aman_Amarjit_Resume.pdf")
+            part['Content-Disposition'] = 'attachment; filename="Aman_Amarjit_Resume.pdf"'
+            msg.attach(part)
         
         # Send via SSL
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
@@ -58,6 +67,15 @@ def send_resend_email(to_email: str, subject: str, html_content: str) -> str:
         "subject": subject,
         "html": html_content
     }
+    
+    if pdf_data:
+        import base64
+        payload["attachments"] = [
+            {
+                "content": base64.b64encode(pdf_data).decode("utf-8"),
+                "filename": "Aman_Amarjit_Resume.pdf"
+            }
+        ]
     
     response = httpx.post(url, headers=headers, json=payload, timeout=15)
     response.raise_for_status()
@@ -168,19 +186,33 @@ def process_send_queue():
         # 2. Lock application for idempotency
         supabase.table("applications").update({"status": "sending"}).eq("id", app_id).execute()
         
+        # Download tailored PDF resume to attach directly
+        pdf_data = None
+        resume_url = app.get("resume_url")
+        if resume_url:
+            try:
+                logger.info(f"Downloading tailored resume from {resume_url} to attach directly...")
+                pdf_res = httpx.get(resume_url, timeout=15)
+                if pdf_res.status_code == 200:
+                    pdf_data = pdf_res.content
+                    logger.info("Resume PDF downloaded successfully.")
+                else:
+                    logger.warning(f"Failed to download resume, status code: {pdf_res.status_code}")
+            except Exception as e:
+                logger.error(f"Error downloading resume PDF: {e}")
+
         # 3. Compile email body and footer signature
-        # Generate unsubscribe URL pointing to our Supabase Edge Function
-        opt_out_url = f"{supabase_url}/functions/v1/handle-email-events?email={email}"
-        
         signature_footer = f"""
 <br><br>
 ---<br>
 Aman Amarjit<br>
-Independent Software Developer & Freelancer<br>
+B.Tech Computer Science Student &amp; Freelance Developer<br>
+Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
+Seeking AI/Backend Internships (Summer/Fall 2026)<br>
 <br>
 <font size="1" color="#888888">
-You are receiving this outreach as a careers contact for {company}. If you no longer wish to receive freelance proposals, you can unsubscribe instantly by clicking <a href="{opt_out_url}">here</a>.
+PS: If this isn't the right channel or you'd prefer not to receive any follow-up, please let me know and I will note it.
 </font>
 """
         email_body = f"{app['email_body']}{signature_footer}"
@@ -201,7 +233,7 @@ You are receiving this outreach as a careers contact for {company}. If you no lo
         else:
             try:
                 logger.info(f"Sending email to {email} for {role_title}...")
-                send_id = send_resend_email(email, subject, email_body)
+                send_id = send_resend_email(email, subject, email_body, pdf_data=pdf_data)
                 logger.info(f"Email sent successfully. Resend ID: {send_id}")
                 
                 now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()

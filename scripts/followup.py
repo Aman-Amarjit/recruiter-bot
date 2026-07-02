@@ -126,16 +126,17 @@ def check_and_send_followups():
             logger.warning(f"Critique audit failed for follow-up on App {app_id}: {e}. Proceeding with caution.")
             
         # 4. Compile footer opt-out
-        opt_out_url = f"{supabase_url}/functions/v1/handle-email-events?email={email}"
         signature_footer = f"""
 <br><br>
 ---<br>
 Aman Amarjit<br>
-Independent Software Developer & Freelancer<br>
+B.Tech Computer Science Student &amp; Freelance Developer<br>
+Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
+Seeking AI/Backend Internships (Summer/Fall 2026)<br>
 <br>
 <font size="1" color="#888888">
-You are receiving this outreach as a careers contact for {company}. If you no longer wish to receive freelance proposals, you can unsubscribe instantly by clicking <a href="{opt_out_url}">here</a>.
+PS: If this isn't the right channel or you'd prefer not to receive any follow-up, please let me know and I will note it.
 </font>
 """
         full_followup_body = f"{followup_body}{signature_footer}"

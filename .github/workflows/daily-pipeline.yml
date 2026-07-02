@@ -100,7 +100,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Keep-Warm Portfolio
-        run: curl -sL "${{ secrets.PORTFOLIO_URL }}"
+        run: |
+          if [ -n "${{ secrets.PORTFOLIO_URL }}" ]; then
+            curl -sL "${{ secrets.PORTFOLIO_URL }}"
+          else
+            echo "PORTFOLIO_URL secret is empty or not configured. Skipping keep-warm ping."
+          fi
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
