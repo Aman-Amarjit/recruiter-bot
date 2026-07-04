@@ -86,9 +86,10 @@ create index idx_applications_status on applications(status);
 create or replace function increment_sends_today(target_date date)
 returns void as $$
 begin
-  update daily_counters
-  set sends_today = sends_today + 1
-  where date = target_date;
+  insert into daily_counters (date, sends_today)
+  values (target_date, 1)
+  on conflict (date) do update
+  set sends_today = daily_counters.sends_today + 1;
 end;
 $$ language plpgsql;
 
