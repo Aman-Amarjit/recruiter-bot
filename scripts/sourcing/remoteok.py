@@ -68,8 +68,14 @@ def main():
             # Combine title + tags to search for matches
             search_pool = (title.lower() + " " + " ".join(tags))
             
-            # Check if any keyword matches
-            is_match = any(keyword in search_pool for keyword in keywords)
+            # Check if any keyword matches with word boundaries (avoids 'email' matching 'ai', 'html' matching 'ml', etc.)
+            import re
+            is_match = False
+            for keyword in keywords:
+                pattern = r'\b' + re.escape(keyword).replace(r'\-', r'[\-\s]') + r'\b'
+                if re.search(pattern, search_pool):
+                    is_match = True
+                    break
             
             if is_match and title and source_url:
                 if supabase:

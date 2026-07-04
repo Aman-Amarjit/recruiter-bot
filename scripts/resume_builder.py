@@ -38,8 +38,13 @@ CRITICAL CONSTRAINTS:
 2. SELECTION: Select the 3 most relevant projects from the candidate's profile.
 3. BULLETS: Rephrase the description bullets of the selected projects to emphasize the technologies and methodologies requested in the job description. Start every bullet with a strong action verb. You may include the metrics from the candidate profile, but never invent any numbers or metrics.
 4. FORMAT: Return ONLY a valid JSON object matching the requested schema. No markdown formatting blocks outside the JSON.
-5. SUMMARY ALIGNMENT: The generated summary MUST align truthfully and proportionally with the candidate's actual background. Frame the candidate as a B.Tech Computer Science student focusing on systems, AI, or security, with practical full-stack software development contract experience. Do NOT claim the candidate is a professional 'cybersecurity specialist' or 'AI engineer'; instead, emphasize their academic research, software engineering base, and tracing/audit projects.
+5. SUMMARY ALIGNMENT: The generated summary MUST align truthfully and proportionally with the candidate's actual background. Frame the candidate as a B.Tech Computer Science student focusing on systems, AI, or security, with practical full-stack software development contract experience. Do NOT claim the candidate is a professional 'cybersecurity specialist' or 'AI engineer'; instead, emphasize their academic research, software engineering base, and tracing/audit projects. Write the summary in professional resume style (third-person implied, e.g. starting with "B.Tech Computer Science student...", NOT "Aman Amarjit is a..." or "I am a...").
 6. NO FABRICATED METRICS: Do NOT invent any percentage improvements, benchmark numbers, FPS values, latency reductions, or scale figures (e.g. "improved by 35%", "reduced latency by 40%", "handles 10k requests"). Only include metrics that are explicitly stated in the candidate's profile JSON. If no metric exists, describe the technique or design decision used instead — that is always credible and verifiable.
+7. 2026 SCREENING ALIGNMENT:
+   - For AI/ML: Emphasize production-ready execution, serving/deployment, Vector DBs, RAG, and LLM orchestration rather than theoretical modeling or notebook-only projects.
+   - For Cybersecurity: Emphasize exact tools (e.g. static analysis, auditing, tracing) and framework alignment (OWASP/MITRE) rather than generic security claims.
+   - For Robotics: Emphasize computer vision integration, physics-simulation, and real-time execution.
+   - For Bullet Points: Start with strong, active ownership-driven verbs (e.g. architected, owned, spearheaded, optimized) rather than passive verbs (e.g. "involved in", "assisted with"). Translate technical complexity into cost-latency tradeoffs, reliability improvements, or business outcomes.
 
 JSON Schema Output:
 {
@@ -52,8 +57,8 @@ JSON Schema Output:
       "name": "Project Name (must match profile exactly)",
       "technologies": ["Tech1", "Tech2"],
       "bullets": [
-        "Rephrased bullet point 1 emphasizing keyword matches",
-        "Rephrased bullet point 2 emphasizing keyword matches"
+        "Rephrased bullet point 1 emphasizing keyword matches and active ownership-driven verbs",
+        "Rephrased bullet point 2 emphasizing keyword matches and active ownership-driven verbs"
       ]
     }
   ]
@@ -179,7 +184,7 @@ def upload_resume_to_storage(pdf_path: str) -> str:
     public_url = supabase.storage.from_("resumes").get_public_url(random_filename)
     return public_url
 
-def render_resume_to_pdf(resume_data: dict, output_path: str):
+def render_resume_to_pdf(resume_data: dict, output_path: str, domain_tag: str):
     """
     Compiles the HTML template and renders it to a PDF using WeasyPrint.
     """
@@ -190,25 +195,48 @@ def render_resume_to_pdf(resume_data: dict, output_path: str):
     projects = resume_data.get("selected_projects") or []
     for proj in projects:
         proj_name = proj.get("name")
-        for domain_tag, domain in CANDIDATE_PROFILE.get("domains", {}).items():
+        for d_tag, domain in CANDIDATE_PROFILE.get("domains", {}).items():
             for p in domain.get("projects", []):
                 if p.get("name") == proj_name:
                     proj["github_url"] = p.get("github_url")
                     break
+
+    # Programmatically clean the summary to prevent name-repeating patterns
+    summary = resume_data.get("summary") or ""
+    name = CANDIDATE_PROFILE["name"]
+    summary = summary.strip().strip('"').strip("'")
+    prefixes_to_strip = [
+        f"{name} is a",
+        f"{name} is",
+        f"{name.split()[0]} is a",
+        f"{name.split()[0]} is",
+        "I am a",
+        "I am"
+    ]
+    for prefix in prefixes_to_strip:
+        if summary.lower().startswith(prefix.lower()):
+            summary = summary[len(prefix):].strip()
+            if summary.lower().startswith("a "):
+                summary = summary[2:].strip()
+            elif summary.lower().startswith("an "):
+                summary = summary[3:].strip()
+            if summary:
+                summary = summary[0].upper() + summary[1:]
+            break
 
     rendered_html = html_template.render(
         name=CANDIDATE_PROFILE["name"],
         city=CANDIDATE_PROFILE["city"],
         phone=CANDIDATE_PROFILE.get("phone", ""),
         location=CANDIDATE_PROFILE.get("location", ""),
-        email=os.getenv("RESEND_SENDER_EMAIL", "applications@yourdomain.com"),
+        email=CANDIDATE_PROFILE.get("email") or os.getenv("SMTP_EMAIL") or os.getenv("RESEND_SENDER_EMAIL") or "amanamarjit04@gmail.com",
         links=CANDIDATE_PROFILE["links"],
         education=CANDIDATE_PROFILE["education"],
         experience=CANDIDATE_PROFILE.get("experience", []),
         certifications=CANDIDATE_PROFILE["domains"].get(domain_tag, {}).get("certifications", []),
         languages=CANDIDATE_PROFILE.get("languages", []),
         honors_awards=CANDIDATE_PROFILE.get("honors_awards", []),
-        summary=resume_data.get("summary"),
+        summary=summary,
         skills=resume_data.get("skills"),
         projects=projects
     )
@@ -233,7 +261,7 @@ def build_tailored_resume(application_id: str, job_description: str, domain_tag:
     # Attempt 1
     try:
         data = call_llm_for_resume(job_description, domain_tag, limit_projects_count=3)
-        render_resume_to_pdf(data, temp_pdf_path)
+        render_resume_to_pdf(data, temp_pdf_path, domain_tag)
         is_valid, reason, match_rate = run_ats_simulation(temp_pdf_path, data.get("matched_keywords", []))
         
         if is_valid:
@@ -244,7 +272,7 @@ def build_tailored_resume(application_id: str, job_description: str, domain_tag:
         
         # Attempt 2 (Retry: drop lowest relevance project by requesting only 2 projects)
         data_retry = call_llm_for_resume(job_description, domain_tag, limit_projects_count=2)
-        render_resume_to_pdf(data_retry, temp_pdf_path)
+        render_resume_to_pdf(data_retry, temp_pdf_path, domain_tag)
         is_valid_retry, reason_retry, match_rate_retry = run_ats_simulation(temp_pdf_path, data_retry.get("matched_keywords", []))
         
         if is_valid_retry:

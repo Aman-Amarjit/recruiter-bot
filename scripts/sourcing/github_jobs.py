@@ -34,6 +34,11 @@ def fetch_github_issues(query_str: str):
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "Freelancer-AutoApply-System"
     }
+    
+    token = os.getenv("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+        
     response = httpx.get(url, headers=headers, timeout=15)
     
     if response.status_code == 429:

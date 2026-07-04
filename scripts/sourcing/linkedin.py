@@ -112,8 +112,8 @@ def parse_title_and_company(raw_title: str) -> tuple:
       'Machine Learning Intern at Nvidia | LinkedIn'
       'AI Research Intern - Scale AI | LinkedIn Jobs'
     """
-    # Strip source suffix ('| LinkedIn', '| LinkedIn Jobs', etc.)
-    clean = re.split(r'\s*\|\s*LinkedIn', raw_title)[0].strip()
+    # Strip source suffix ('| LinkedIn', '- LinkedIn', etc. case-insensitively)
+    clean = re.split(r'\s*[\-|]\s*linkedin', raw_title, flags=re.IGNORECASE)[0].strip()
 
     # Try ' at ' split (most common LinkedIn format)
     if ' at ' in clean:

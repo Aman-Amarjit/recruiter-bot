@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from nacl import encoding, public
 
 # Load environment variables
-load_dotenv(dotenv_path="/home/aman-amarjit/Desktop/internship/.env")
+load_dotenv(dotenv_path=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env")))
 
 # Configuration
 TOKEN = os.getenv("GITHUB_TOKEN")

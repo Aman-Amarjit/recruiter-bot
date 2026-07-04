@@ -4,6 +4,7 @@
   "city": "Bhubaneswar, Odisha, India",
   "location": "Gothapatna, Bhubaneswar, Odisha",
   "phone": "+91 8763706050",
+  "email": "amanamarjit04@gmail.com",
   "education": {
     "degree": "Bachelor of Technology in Computer Science & Engineering",
     "institution": "Indira Gandhi Institute of Technology (IGIT), Sarang",
@@ -81,12 +82,6 @@
       "skills": ["Cybersecurity", "Risk Assessment and Management", "SIEM Tools and Technologies", "System Hardening", "Intrusion Detection", "Firewalls", "Docker", "SAST", "Subprocess Management"],
       "projects": [
         {
-          "name": "multi-agent-security-audit",
-          "github_url": "https://github.com/aman-amarjit/multi-agent-security-audit",
-          "description": "Conducted a comprehensive security audit and static analysis on a Multi-Agent Orchestrator System, identifying 5 high-severity vulnerabilities and hardening authentication endpoints.",
-          "technologies": ["Python", "Security Auditing", "Static Analysis", "System Hardening"]
-        },
-        {
           "name": "xtrace-sdk",
           "github_url": "https://github.com/aman-amarjit/xtrace-sdk",
           "description": "Distributed tracing SDK utilizing context propagation (HTTP headers) and async event hooks to collect trace spans from remote services, forwarding structured trace logs to a centralized collector.",
@@ -124,12 +119,6 @@
       "focus": "Full-Stack Web Applications and Systems Engineering",
       "skills": ["TypeScript", "JavaScript", "Kotlin", "React", "Node.js", "REST APIs", "Real-time Systems", "Algorithmic Trading", "Geopolitical Simulation", "Android Development"],
       "projects": [
-        {
-          "name": "PLUMBER",
-          "github_url": "https://github.com/aman-amarjit/PLUMBER",
-          "description": "Dual-interface Android service marketplace (Kotlin) with real-time technician tracking and an operator dashboard.",
-          "technologies": ["Kotlin", "Android", "Firebase", "Real-time Systems"]
-        },
         {
           "name": "Trade",
           "github_url": "https://github.com/aman-amarjit/Trade",

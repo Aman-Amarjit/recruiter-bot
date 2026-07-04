@@ -101,7 +101,7 @@ def send_resend_email(to_email: str, subject: str, html_content: str, pdf_data: 
         return f"smtp-{uuid.uuid4()}"
 
     api_key = os.getenv("RESEND_API_KEY")
-    sender = os.getenv("RESEND_SENDER_EMAIL", "applications@apply.yourdomain.com")
+    sender = os.getenv("RESEND_SENDER_EMAIL") or os.getenv("SMTP_EMAIL") or "onboarding@resend.dev"
     
     if not api_key:
         raise ValueError("Resend API key is missing.")
@@ -138,7 +138,7 @@ def get_pacing_batch_size() -> int:
     if not supabase:
         return 0
         
-    today_str = datetime.date.today().isoformat()
+    today_str = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
     
     # 1. Retrieve or initialize today's daily counter
     res = supabase.table("daily_counters").select("*").eq("date", today_str).execute()
@@ -280,7 +280,7 @@ Seeking AI/Backend Internships (Summer/Fall 2026)
             supabase.table("send_log").insert({"application_id": app_id, "sent_at": now_iso}).execute()
             
             # Increment sends count today
-            today_str = datetime.date.today().isoformat()
+            today_str = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
             supabase.rpc("increment_sends_today", {"target_date": today_str}).execute()
         else:
             try:
@@ -297,7 +297,7 @@ Seeking AI/Backend Internships (Summer/Fall 2026)
                 supabase.table("send_log").insert({"application_id": app_id, "sent_at": now_iso}).execute()
                 
                 # Increment sends count today
-                today_str = datetime.date.today().isoformat()
+                today_str = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
                 supabase.rpc("increment_sends_today", {"target_date": today_str}).execute()
                 
             except Exception as e:

@@ -69,7 +69,15 @@ def parse_internships(html: str, domain_tag: str):
             company = company_el.text.strip() if company_el else "Unknown Company"
             
             # Source URL
-            link_el = card.find("a", href=True)
+            link_el = None
+            if title_el and title_el.name == "a":
+                link_el = title_el
+            elif title_el:
+                link_el = title_el.find("a", href=True)
+            
+            if not link_el:
+                link_el = card.find("a", class_="view_detail_button") or card.find("a", href=True)
+                
             if not link_el:
                 continue
             href = link_el["href"]

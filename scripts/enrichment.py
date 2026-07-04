@@ -67,6 +67,24 @@ def get_company_domain(company_name: str) -> str:
                 
     return domain_guess
 
+def is_valid_contact_email(email: str) -> bool:
+    """
+    Validates if an email is not in the blacklist of generic dead-end non-hiring addresses.
+    """
+    if not email or "@" not in email:
+        return False
+        
+    email_lower = email.lower()
+    if email_lower.endswith((".png", ".jpg", ".gif", "example.com", "wixpress.com")):
+        return False
+        
+    prefix = email_lower.split("@")[0]
+    blacklist = ["noreply", "no-reply", "donotreply", "support", "billing", "privacy", "dpo", "abuse", "legal", "security", "help"]
+    if any(item == prefix or prefix.startswith(item + "-") or prefix.startswith(item + ".") for item in blacklist):
+        return False
+        
+    return True
+
 @retry_api_call
 def query_google_cse_for_emails(company_name: str, domain: str) -> list:
     """
@@ -97,10 +115,8 @@ def query_google_cse_for_emails(company_name: str, domain: str) -> list:
         # Search for email address matches inside text snippets
         matches = re.findall(EMAIL_REGEX, snippet + " " + html_snippet)
         for email in matches:
-            # Filter out obvious false positives
-            if email.lower().endswith((".png", ".jpg", ".gif", "example.com", "wixpress.com")):
-                continue
-            emails.append(email.lower())
+            if is_valid_contact_email(email):
+                emails.append(email.lower())
             
     return list(set(emails))
 
@@ -128,6 +144,8 @@ def query_hunter_api(company_name: str, domain: str) -> tuple:
         
         for item in emails:
             email_val = item.get("value")
+            if not is_valid_contact_email(email_val):
+                continue
             confidence = float(item.get("confidence", 0)) / 100.0
             first_name = item.get("first_name")
             last_name = item.get("last_name")

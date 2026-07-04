@@ -45,7 +45,7 @@ def run_auto_cap_ramping() -> tuple:
         
         if len(sends) < 10:
             # Not enough data to compute trailing stats fairly, preserve cap
-            today_str = datetime.date.today().isoformat()
+            today_str = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
             current = supabase.table("daily_counters").select("cap").eq("date", today_str).execute()
             cap = current.data[0]["cap"] if current.data else 5
             return cap, 0.0, False
@@ -54,7 +54,7 @@ def run_auto_cap_ramping() -> tuple:
         bounce_rate = (bounces_count / len(sends)) * 100.0
         
         # 2. Retrieve current cap
-        today_str = datetime.date.today().isoformat()
+        today_str = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
         current_res = supabase.table("daily_counters").select("cap").eq("date", today_str).execute()
         current_cap = current_res.data[0]["cap"] if current_res.data else 5
         
@@ -209,7 +209,7 @@ def main():
     # 3. Assemble HTML Digest Message
     digest_msg = f"""
 📈 <b>Internship Outreach Daily Digest</b>
-Date: {datetime.date.today().strftime('%Y-%m-%d')}
+Date: {datetime.datetime.now(datetime.timezone.utc).date().strftime('%Y-%m-%d')}
 
 📊 <b>Conversion Funnel (Last 24h):</b>
 Sourced: {funnel['sourced']} | Enriched: {funnel['enriched']} | Drafted: {funnel['drafted']}
