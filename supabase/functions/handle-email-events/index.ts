@@ -25,10 +25,10 @@ async function analyzeSentiment(text: string): Promise<string> {
     })
     if (response.ok) {
       const data = await response.json()
-      const answer = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim()?.toLowerCase() ?? "neutral"
-      if (["positive", "negative", "neutral"].includes(answer)) {
-        return answer
-      }
+      const rawAnswer = data.candidates?.[0]?.content?.parts?.[0]?.text?.toLowerCase() ?? ""
+      if (rawAnswer.includes("positive")) return "positive"
+      if (rawAnswer.includes("negative")) return "negative"
+      if (rawAnswer.includes("neutral")) return "neutral"
     }
     return "neutral"
   } catch (e) {

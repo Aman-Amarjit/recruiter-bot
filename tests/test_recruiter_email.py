@@ -26,8 +26,12 @@ def analyze_sentiment_python(text: str) -> str:
     try:
         response = model.generate_content(prompt)
         sentiment = response.text.strip().lower()
-        if sentiment in ["positive", "negative", "neutral"]:
-            return sentiment
+        if "positive" in sentiment:
+            return "positive"
+        if "negative" in sentiment:
+            return "negative"
+        if "neutral" in sentiment:
+            return "neutral"
         return "neutral"
     except Exception as e:
         print(f"Sentiment analysis call failed: {e}")
