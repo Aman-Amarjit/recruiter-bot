@@ -264,13 +264,13 @@ def main():
         
     logger.info("Starting Personalization & Resume Tailoring Pipeline.")
     
-    # 1. Select applications in drafting status, joining listing and contact details
+    # 1. Select applications in drafting or recheck status, joining listing and contact details
     try:
-        drafts_res = supabase.table("applications").select("*, listings(*), contacts(*)").eq("status", "drafting").execute()
+        drafts_res = supabase.table("applications").select("*, listings(*), contacts(*)").in_("status", ["drafting", "recheck"]).execute()
         drafts = drafts_res.data or []
         
         if not drafts:
-            logger.info("No applications in 'drafting' status.")
+            logger.info("No applications in 'drafting' or 'recheck' status.")
             return
             
         logger.info(f"Found {len(drafts)} applications requiring personalization.")

@@ -32,8 +32,9 @@ create table applications (
   id uuid default uuid_generate_v4() primary key,
   listing_id uuid references listings(id) on delete cascade not null,
   contact_id uuid references contacts(id) on delete cascade not null,
-  status text not null default 'drafting', -- 'drafting', 'generating', 'held', 'approved', 'sending', 'sent', 'failed', 'resume_failed', 'replied', 'cancelled'
+  status text not null default 'drafting', -- 'drafting', 'generating', 'held', 'approved', 'sending', 'sent', 'failed', 'resume_failed', 'replied', 'cancelled', 'recheck'
   -- 'held' indicates an application vetted by critique but awaiting manual approval before sending.
+  -- 'recheck' flags held/approved applications to be re-drafted and re-evaluated by the LLM.
   email_body text not null,
   critique_score integer check (critique_score >= 1 and critique_score <= 10),
   failure_reason text, -- Persists resume-build or critique failure details
