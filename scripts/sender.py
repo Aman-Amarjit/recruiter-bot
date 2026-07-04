@@ -261,14 +261,24 @@ Indira Gandhi Institute of Technology (IGIT), Sarang<br>
 Dhenkanal, Odisha, India<br>
 Seeking AI/Backend Internships (Summer/Fall 2026)
 """
-        raw_body = app['email_body']
-        if raw_body.strip().startswith("Subject:"):
+        raw_body = app['email_body'].strip()
+        # Clean markdown code blocks if the LLM wrapped the output
+        if raw_body.startswith("```"):
+            newline_idx = raw_body.find("\n")
+            if newline_idx != -1:
+                raw_body = raw_body[newline_idx:].strip()
+            else:
+                raw_body = raw_body[3:].strip()
+            if raw_body.endswith("```"):
+                raw_body = raw_body[:-3].strip()
+
+        if raw_body.startswith("Subject:"):
             parts = raw_body.split("\n", 1)
             subject = parts[0].replace("Subject:", "").strip()
             email_body = f"{parts[1].strip()}{signature_footer}"
         else:
             subject = f"Internship Inquiry - {role_title}"
-            email_body = f"{raw_body.strip()}{signature_footer}"
+            email_body = f"{raw_body}{signature_footer}"
         
         # 4. Dispatch Email
         if send_disabled:

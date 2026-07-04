@@ -5,6 +5,9 @@ import httpx
 import socket
 from datetime import datetime, timezone
 
+# Set default timeout for all socket connections (including DNS lookups) to prevent hangs
+socket.setdefaulttimeout(3.0)
+
 # Add parent directory to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from scripts.db_client import (

@@ -140,6 +140,16 @@ Dhenkanal, Odisha, India<br>
 Seeking AI/Backend Internships (Summer/Fall 2026)
 """
         raw_followup = followup_body.strip()
+        # Clean markdown code blocks if the LLM wrapped the output
+        if raw_followup.startswith("```"):
+            newline_idx = raw_followup.find("\n")
+            if newline_idx != -1:
+                raw_followup = raw_followup[newline_idx:].strip()
+            else:
+                raw_followup = raw_followup[3:].strip()
+            if raw_followup.endswith("```"):
+                raw_followup = raw_followup[:-3].strip()
+
         if raw_followup.startswith("Subject:"):
             parts = raw_followup.split("\n", 1)
             subject = parts[0].replace("Subject:", "").strip()
