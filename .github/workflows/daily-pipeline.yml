@@ -89,6 +89,10 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CANDIDATE_EMAIL: ${{ secrets.CANDIDATE_EMAIL || secrets.SMTP_EMAIL }}
+          CANDIDATE_PHONE: ${{ secrets.CANDIDATE_PHONE }}
+          CANDIDATE_CITY: ${{ secrets.CANDIDATE_CITY }}
+          CANDIDATE_LOCATION: ${{ secrets.CANDIDATE_LOCATION }}
         run: python -m scripts.llm_pipeline
 
   send:
@@ -124,6 +128,10 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CANDIDATE_EMAIL: ${{ secrets.CANDIDATE_EMAIL || secrets.SMTP_EMAIL }}
+          CANDIDATE_PHONE: ${{ secrets.CANDIDATE_PHONE }}
+          CANDIDATE_CITY: ${{ secrets.CANDIDATE_CITY }}
+          CANDIDATE_LOCATION: ${{ secrets.CANDIDATE_LOCATION }}
         run: python -m scripts.followup && python -m scripts.sender
 
   digest:
