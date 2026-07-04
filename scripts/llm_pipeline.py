@@ -200,8 +200,9 @@ def process_application(app):
         logger.info(f"App {app_id} critique score: {score}. Verifiable: {verifiable}. Reason: {reason}")
         
         auto_approve = os.getenv("AUTO_APPROVE", "false").lower() == "true"
+        min_approve_score = int(os.getenv("MIN_APPROVE_SCORE", "7"))
         
-        if auto_approve or (score >= 7 and verifiable):
+        if auto_approve or (score >= min_approve_score and verifiable):
             # Succeeded & Approved
             supabase.table("applications").update({
                 "status": "approved",
@@ -212,9 +213,9 @@ def process_application(app):
                 logger.info(f"Application {app_id} AUTO-APPROVED (AUTO_APPROVE is enabled).")
             else:
                 logger.info(f"Application {app_id} APPROVED.")
-        elif score in [4, 5, 6] and verifiable:
+        elif score < min_approve_score and score >= 4 and verifiable:
             # Regenerate once
-            logger.info(f"Score {score} is borderline. Regenerating email once with critique feedback...")
+            logger.info(f"Score {score} is below threshold ({min_approve_score}) but borderline. Regenerating email once with critique feedback...")
             refined_system_prompt = f"{EMAIL_DRAFTER_SYSTEM_PROMPT}\nRefining instructions: Make draft less generic based on previous critique feedback: {reason}"
             
             # Re-draft
@@ -225,7 +226,7 @@ def process_application(app):
             score_retry = critique_retry.get("score", 0)
             verifiable_retry = critique_retry.get("verifiable_check", False)
             
-            if auto_approve or (score_retry >= 7 and verifiable_retry):
+            if auto_approve or (score_retry >= min_approve_score and verifiable_retry):
                 supabase.table("applications").update({
                     "status": "approved",
                     "email_body": email_retry,

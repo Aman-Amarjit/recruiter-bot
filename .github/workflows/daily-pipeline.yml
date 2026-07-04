@@ -94,6 +94,7 @@ jobs:
           CANDIDATE_CITY: ${{ secrets.CANDIDATE_CITY }}
           CANDIDATE_LOCATION: ${{ secrets.CANDIDATE_LOCATION }}
           AUTO_APPROVE: ${{ secrets.AUTO_APPROVE || vars.AUTO_APPROVE || 'false' }}
+          MIN_APPROVE_SCORE: ${{ secrets.MIN_APPROVE_SCORE || vars.MIN_APPROVE_SCORE || '7' }}
         run: python -m scripts.llm_pipeline
 
   send:
