@@ -199,14 +199,19 @@ def process_application(app):
         
         logger.info(f"App {app_id} critique score: {score}. Verifiable: {verifiable}. Reason: {reason}")
         
-        if score >= 7 and verifiable:
+        auto_approve = os.getenv("AUTO_APPROVE", "false").lower() == "true"
+        
+        if auto_approve or (score >= 7 and verifiable):
             # Succeeded & Approved
             supabase.table("applications").update({
                 "status": "approved",
                 "email_body": email_body,
                 "critique_score": score
             }).eq("id", app_id).execute()
-            logger.info(f"Application {app_id} APPROVED.")
+            if auto_approve:
+                logger.info(f"Application {app_id} AUTO-APPROVED (AUTO_APPROVE is enabled).")
+            else:
+                logger.info(f"Application {app_id} APPROVED.")
         elif score in [4, 5, 6] and verifiable:
             # Regenerate once
             logger.info(f"Score {score} is borderline. Regenerating email once with critique feedback...")
@@ -220,7 +225,7 @@ def process_application(app):
             score_retry = critique_retry.get("score", 0)
             verifiable_retry = critique_retry.get("verifiable_check", False)
             
-            if score_retry >= 7 and verifiable_retry:
+            if auto_approve or (score_retry >= 7 and verifiable_retry):
                 supabase.table("applications").update({
                     "status": "approved",
                     "email_body": email_retry,
