@@ -28,6 +28,12 @@ PROFILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pr
 with open(PROFILE_PATH, "r") as f:
     CANDIDATE_PROFILE = json.load(f)
 
+# Dynamically override personal details from environment variables if present to allow repo anonymization
+CANDIDATE_PROFILE["email"] = os.getenv("CANDIDATE_EMAIL") or os.getenv("SMTP_EMAIL") or os.getenv("RESEND_SENDER_EMAIL") or CANDIDATE_PROFILE.get("email") or "YOUR_EMAIL_ADDRESS"
+CANDIDATE_PROFILE["phone"] = os.getenv("CANDIDATE_PHONE") or CANDIDATE_PROFILE.get("phone") or "YOUR_PHONE_NUMBER"
+CANDIDATE_PROFILE["city"] = os.getenv("CANDIDATE_CITY") or CANDIDATE_PROFILE.get("city") or "YOUR_CITY"
+CANDIDATE_PROFILE["location"] = os.getenv("CANDIDATE_LOCATION") or CANDIDATE_PROFILE.get("location") or "YOUR_LOCATION"
+
 # System prompt for LLM tailoring
 RESUME_BUILDER_SYSTEM_PROMPT = """
 You are an expert resume developer specialized in ATS optimization for student internship resumes.
@@ -229,7 +235,7 @@ def render_resume_to_pdf(resume_data: dict, output_path: str, domain_tag: str):
         city=CANDIDATE_PROFILE["city"],
         phone=CANDIDATE_PROFILE.get("phone", ""),
         location=CANDIDATE_PROFILE.get("location", ""),
-        email=CANDIDATE_PROFILE.get("email") or os.getenv("SMTP_EMAIL") or os.getenv("RESEND_SENDER_EMAIL") or "amanamarjit04@gmail.com",
+        email=CANDIDATE_PROFILE.get("email"),
         links=CANDIDATE_PROFILE["links"],
         education=CANDIDATE_PROFILE["education"],
         experience=CANDIDATE_PROFILE.get("experience", []),

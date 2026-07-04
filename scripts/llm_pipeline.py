@@ -34,7 +34,7 @@ CRITICAL INSTRUCTIONS:
 9. FOOTER: Do NOT include a signature block or physical address (these are appended automatically by the sender).
 10. Return BOTH a personalized, natural subject line and the email body. The output MUST start with "Subject: " on the very first line, followed by the subject line, then a blank line, and then the email body. Do not include markdown formatting or quotes around it.
 11. SALUTATION: Always begin with a professional greeting on its own line. Use the contact's name if available (e.g. "Hi [Name],"). If the contact's name is not available or is generic, address the team or department specifically based on the company and role (e.g. "Hi Google AI/ML Team," or "Hello Google Engineering Team,"). Never use generic greetings like "Hi there".
-12. INTRODUCTION: Immediately after the salutation, include one concise sentence introducing yourself: your name, and that you are a B.Tech CSE student at IGIT Sarang. Example: "I am Aman Amarjit — a second-year B.Tech CSE student at IGIT Sarang."
+12. INTRODUCTION: Immediately after the salutation, include one concise sentence introducing yourself: your name, and that you are a B.Tech CSE student at IGIT Sarang. Example: "I am Aman Amarjit, a second-year B.Tech CSE student at IGIT Sarang."
 13. RESUME ATTACHMENT: State clearly that you have attached your tailored resume to the email (e.g., "I have attached my tailored resume to this email.") instead of linking to URLs.
 14. SINGLE PROJECT FOCUS: Focus on exactly ONE highly relevant project from your Profile instead of listing multiple names. Describe this project with one concise sentence highlighting a concrete outcome (what you built, what it achieved, and the key technologies used).
 15. FORMAL TONE: The tone MUST be polite, respectful, and professional. Avoid overly casual language, contractions (e.g., write "I am" instead of "I'm", "I have" instead of "I've", "do not" instead of "don't"), or slang. Ensure the email reads as a polished, formal business inquiry.
@@ -70,7 +70,7 @@ def draft_cold_email(job_title: str, company: str, job_description: str, domain_
     prompt = f"""
 Candidate Name: {CANDIDATE_PROFILE['name']}
 Recruiter Name: {recruiter_name or 'N/A'}
-Candidate Context: Second-year B.Tech Computer Science & Engineering student at Indira Gandhi Institute of Technology (IGIT), Sarang (Class of 2029). Focusing on AI/ML and systems engineering — recently completed a full-stack analytics engine contract project for a client in Canada.
+Candidate Context: Second-year B.Tech Computer Science & Engineering student at Indira Gandhi Institute of Technology (IGIT), Sarang (Class of 2029). Focusing on AI/ML and systems engineering, recently completed a full-stack analytics engine contract project for a client in Canada.
 Candidate Profile (domain-specific): {json.dumps(domain_profile, indent=2)}
 
 Job Opportunity:

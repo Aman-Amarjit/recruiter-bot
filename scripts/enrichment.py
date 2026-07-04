@@ -82,7 +82,7 @@ def is_valid_contact_email(email: str) -> bool:
         return False
         
     prefix = email_lower.split("@")[0]
-    blacklist = ["noreply", "no-reply", "donotreply", "support", "billing", "privacy", "dpo", "abuse", "legal", "security", "help"]
+    blacklist = ["noreply", "no-reply", "donotreply", "support", "billing", "privacy", "dpo", "abuse", "legal", "security", "help", "careers", "jobs", "hr", "info", "contact", "recruitment"]
     if any(item == prefix or prefix.startswith(item + "-") or prefix.startswith(item + ".") for item in blacklist):
         return False
         
