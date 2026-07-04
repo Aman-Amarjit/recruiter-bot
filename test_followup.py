@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-import os, datetime, uuid
+import os
+# Ensure SEND_DISABLED is true for dry-run before importing any scripts
+os.environ['SEND_DISABLED'] = 'true'
+
+import datetime, uuid
 from scripts.db_client import supabase, logger
 from scripts.followup import check_and_send_followups
-
-# Ensure SEND_DISABLED is true for dry-run
-os.environ['SEND_DISABLED'] = 'true'
 email = f"john.doe+{uuid.uuid4().hex[:6]}@example.com"
 
 def insert_test_data():
