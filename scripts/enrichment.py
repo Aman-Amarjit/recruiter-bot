@@ -34,40 +34,42 @@ def get_company_domain(company_name: str) -> str:
     cleaned = clean_company_name(company_name)
     domain_guess = cleaned.replace(" ", "").replace("-", "") + ".com"
     
-    # Verify domain exists by performing a DNS lookup
+    # Try searching Google CSE first if API key is available
+    api_key = os.getenv("GOOGLE_CSE_API_KEY")
+    cx = os.getenv("GOOGLE_CSE_ENGINE_ID")
+    if api_key and cx:
+        try:
+            url = "https://www.googleapis.com/customsearch/v1"
+            params = {
+                "key": api_key,
+                "cx": cx,
+                "q": f"{company_name} official website",
+                "num": 3
+            }
+            response = httpx.get(url, params=params, timeout=10)
+            if response.status_code == 200:
+                items = response.json().get("items", [])
+                for item in items:
+                    link = item.get("link", "")
+                    # Parse domain from URL
+                    match = re.search(r'https?://([^/]+)', link)
+                    if match:
+                        domain = match.group(1).replace("www.", "")
+                        try:
+                            socket.gethostbyname(domain)
+                            return domain
+                        except socket.gaierror:
+                            continue
+        except Exception as e:
+            logger.warning(f"Google CSE domain search failed for {company_name}: {e}")
+            
+    # Fallback to heuristic guess
     try:
         socket.gethostbyname(domain_guess)
         return domain_guess
     except socket.gaierror:
-        # If lookup fails, try searching Google CSE for official domain
-        api_key = os.getenv("GOOGLE_CSE_API_KEY")
-        cx = os.getenv("GOOGLE_CSE_ENGINE_ID")
-        if api_key and cx:
-            try:
-                url = "https://www.googleapis.com/customsearch/v1"
-                params = {
-                    "key": api_key,
-                    "cx": cx,
-                    "q": f"{company_name} official website",
-                    "num": 3
-                }
-                response = httpx.get(url, params=params, timeout=10)
-                if response.status_code == 200:
-                    items = response.json().get("items", [])
-                    for item in items:
-                        link = item.get("link", "")
-                        # Parse domain from URL
-                        match = re.search(r'https?://([^/]+)', link)
-                        if match:
-                            domain = match.group(1).replace("www.", "")
-                            try:
-                                socket.gethostbyname(domain)
-                                return domain
-                            except socket.gaierror:
-                                continue
-            except Exception as e:
-                logger.warning(f"Google CSE domain search failed for {company_name}: {e}")
-                
+        pass
+        
     return domain_guess
 
 def is_valid_contact_email(email: str) -> bool:
@@ -177,9 +179,12 @@ def verify_email_domain_has_mx(email: str) -> bool:
     """
     try:
         domain = email.split("@")[1]
-        # Perform basic DNS lookup check
-        socket.getaddrinfo(domain, 80)
-        return True
+        import subprocess
+        # Run host -t mx command to verify MX record presence
+        result = subprocess.run(["host", "-t", "mx", domain], capture_output=True, text=True, timeout=5)
+        if result.returncode == 0 and "mail is handled by" in result.stdout:
+            return True
+        return False
     except Exception:
         return False
 

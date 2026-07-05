@@ -1,5 +1,5 @@
 {
-  "name": "Aman Amarjit",
+  "name": "YOUR_NAME",
   "title": "B.Tech Computer Science & Engineering Student",
   "city": "YOUR_CITY_COUNTRY",
   "location": "YOUR_LOCATION",
@@ -39,31 +39,31 @@
       "projects": [
         {
           "name": "Knowledge-Synthesizer",
-          "github_url": "https://github.com/aman-amarjit/Knowledge-Synthesizer",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/Knowledge-Synthesizer",
           "description": "NLP pipeline that transforms raw discussions into real-time semantic knowledge graphs via entity extraction and concept relationship inference.",
           "technologies": ["Python", "NLP", "LLMs", "HTML", "CSS", "JavaScript"]
         },
         {
           "name": "discord-ai",
-          "github_url": "https://github.com/aman-amarjit/discord-ai",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/discord-ai",
           "description": "Autonomous AI agent with a dynamic mood-state engine, persistent user memory via entity extraction, and behavioral pacing — deployed with Docker + PM2.",
           "technologies": ["Python", "Groq", "Docker", "PM2", "SQLite"]
         },
         {
           "name": "personal-butler",
-          "github_url": "https://github.com/aman-amarjit/personal-butler",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/personal-butler",
           "description": "AI Desktop Agent featuring episodic memory, local RAG pipeline, and a cognitive emotion framework (OCC/PAD model).",
           "technologies": ["Python", "RAG", "LLMs", "SQLite"]
         },
         {
           "name": "calling-system",
-          "github_url": "https://github.com/aman-amarjit/calling-system",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/calling-system",
           "description": "Integrated VoIP automation system handling intelligent call routing and real-time voice AI agents via Twilio.",
           "technologies": ["Python", "FastAPI", "WebSockets", "Twilio API", "TTS/STT"]
         },
         {
           "name": "crypto-bot / insta-bot",
-          "github_url": "https://github.com/aman-amarjit/crypto-bot",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/crypto-bot",
           "description": "Automated Threads/Instagram publishing bots generating daily crypto analytics content and synthetic AI images.",
           "technologies": ["Python", "Meta API", "Diffusers", "Pillow"]
         }
@@ -83,7 +83,7 @@
       "projects": [
         {
           "name": "xtrace-sdk",
-          "github_url": "https://github.com/aman-amarjit/xtrace-sdk",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/xtrace-sdk",
           "description": "Distributed tracing SDK utilizing context propagation (HTTP headers) and async event hooks to collect trace spans from remote services, forwarding structured trace logs to a centralized collector.",
           "technologies": ["Python", "Docker", "Subprocess Management"]
         }
@@ -103,13 +103,13 @@
       "projects": [
         {
           "name": "solar-system-using-hand-gesture",
-          "github_url": "https://github.com/aman-amarjit/solar-system-using-hand-gesture",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/solar-system-using-hand-gesture",
           "description": "Real-time hand gesture control of a WebGL solar system — MediaPipe computer vision fused with Three.js orbital physics at 30fps.",
           "technologies": ["JavaScript", "HTML", "WebGL", "Three.js", "MediaPipe", "OpenCV", "Python"]
         },
         {
           "name": "Face-recognition",
-          "github_url": "https://github.com/aman-amarjit/Face-recognition",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/Face-recognition",
           "description": "Privacy-first face recognition running 100% client-side via TensorFlow.js — zero biometric data leaves the browser.",
           "technologies": ["JavaScript", "TensorFlow.js", "IndexedDB"]
         }
@@ -121,13 +121,13 @@
       "projects": [
         {
           "name": "Trade",
-          "github_url": "https://github.com/aman-amarjit/Trade",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/Trade",
           "description": "Algorithmic trading engine with automated breakout detection, volatility filtering, and fee-aware risk management.",
           "technologies": ["TypeScript", "Algorithmic Trading", "Financial APIs"]
         },
         {
           "name": "RULE-THE-WORLD",
-          "github_url": "https://github.com/aman-amarjit/RULE-THE-WORLD",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/RULE-THE-WORLD",
           "description": "Geopolitical & macroeconomic simulator built on a custom modular JS engine — zero framework dependencies, real-time diplomatic state machines.",
           "technologies": ["JavaScript", "Custom Game Engine", "State Machines"]
         }
@@ -170,8 +170,8 @@
     }
   ],
   "links": {
-    "portfolio": "https://aman-amarjit.onrender.com",
-    "github": "https://github.com/aman-amarjit",
-    "linkedin": "https://linkedin.com/in/aman-amarjit"
+    "portfolio": "YOUR_PORTFOLIO_URL",
+    "github": "https://github.com/YOUR_GITHUB_USERNAME",
+    "linkedin": "https://linkedin.com/in/YOUR_LINKEDIN_USERNAME"
   }
 }

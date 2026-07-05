@@ -23,16 +23,34 @@ except Exception as e:
     WEASYPRINT_AVAILABLE = False
     logger.warning(f"WeasyPrint is not fully available in this local environment: {e}")
 
-# Load profile.json as ground truth
-PROFILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "profile.json"))
-with open(PROFILE_PATH, "r") as f:
-    CANDIDATE_PROFILE = json.load(f)
+# Load profile.json as ground truth with dynamic replacement for repository anonymization
+def load_anonymized_profile() -> dict:
+    PROFILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "profile.json"))
+    with open(PROFILE_PATH, "r") as f:
+        profile_str = f.read()
+        
+    candidate_name = os.getenv("CANDIDATE_NAME") or "Aman Amarjit"
+    github_user = os.getenv("CANDIDATE_GITHUB_USERNAME") or "aman-amarjit"
+    linkedin_user = os.getenv("CANDIDATE_LINKEDIN_USERNAME") or "aman-amarjit"
+    portfolio_url = os.getenv("CANDIDATE_PORTFOLIO_URL") or "https://aman-amarjit.onrender.com"
+    email = os.getenv("CANDIDATE_EMAIL") or os.getenv("SMTP_EMAIL") or os.getenv("RESEND_SENDER_EMAIL") or "amanamarjit04@gmail.com"
+    phone = os.getenv("CANDIDATE_PHONE") or "+91 8763706050"
+    city = os.getenv("CANDIDATE_CITY") or "Bhubaneswar, Odisha, India"
+    location = os.getenv("CANDIDATE_LOCATION") or "Gothapatna, Bhubaneswar, Odisha"
+    
+    profile_str = profile_str.replace("YOUR_NAME", candidate_name)
+    profile_str = profile_str.replace("YOUR_GITHUB_USERNAME", github_user)
+    profile_str = profile_str.replace("YOUR_LINKEDIN_USERNAME", linkedin_user)
+    profile_str = profile_str.replace("YOUR_PORTFOLIO_URL", portfolio_url)
+    profile_str = profile_str.replace("YOUR_EMAIL_ADDRESS", email)
+    profile_str = profile_str.replace("YOUR_PHONE_NUMBER", phone)
+    profile_str = profile_str.replace("YOUR_CITY_COUNTRY", city)
+    profile_str = profile_str.replace("YOUR_CITY", city)
+    profile_str = profile_str.replace("YOUR_LOCATION", location)
+    
+    return json.loads(profile_str)
 
-# Dynamically override personal details from environment variables if present to allow repo anonymization
-CANDIDATE_PROFILE["email"] = os.getenv("CANDIDATE_EMAIL") or os.getenv("SMTP_EMAIL") or os.getenv("RESEND_SENDER_EMAIL") or CANDIDATE_PROFILE.get("email") or "YOUR_EMAIL_ADDRESS"
-CANDIDATE_PROFILE["phone"] = os.getenv("CANDIDATE_PHONE") or CANDIDATE_PROFILE.get("phone") or "YOUR_PHONE_NUMBER"
-CANDIDATE_PROFILE["city"] = os.getenv("CANDIDATE_CITY") or CANDIDATE_PROFILE.get("city") or "YOUR_CITY"
-CANDIDATE_PROFILE["location"] = os.getenv("CANDIDATE_LOCATION") or CANDIDATE_PROFILE.get("location") or "YOUR_LOCATION"
+CANDIDATE_PROFILE = load_anonymized_profile()
 
 # System prompt for LLM tailoring
 RESUME_BUILDER_SYSTEM_PROMPT = """
