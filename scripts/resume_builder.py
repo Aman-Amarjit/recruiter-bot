@@ -32,7 +32,7 @@ def load_anonymized_profile() -> dict:
     candidate_name = os.getenv("CANDIDATE_NAME") or "Aman Amarjit"
     github_user = os.getenv("CANDIDATE_GITHUB_USERNAME") or "aman-amarjit"
     linkedin_user = os.getenv("CANDIDATE_LINKEDIN_USERNAME") or "aman-amarjit"
-    portfolio_url = os.getenv("CANDIDATE_PORTFOLIO_URL") or "https://aman-amarjit.onrender.com"
+    portfolio_url = os.getenv("CANDIDATE_PORTFOLIO_URL") or os.getenv("PORTFOLIO_URL") or "https://aman-amarjit.onrender.com"
     email = os.getenv("CANDIDATE_EMAIL") or os.getenv("SMTP_EMAIL") or os.getenv("RESEND_SENDER_EMAIL") or "amanamarjit04@gmail.com"
     phone = os.getenv("CANDIDATE_PHONE") or "+91 8763706050"
     city = os.getenv("CANDIDATE_CITY") or "Bhubaneswar, Odisha, India"
