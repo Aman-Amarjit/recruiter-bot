@@ -132,7 +132,7 @@ def query_hunter_api(company_name: str, domain: str) -> tuple:
     Returns (email, confidence_score, name) or (None, 0.0, None)
     """
     api_key = os.getenv("HUNTER_API_KEY")
-    if not api_key:
+    if not api_key or api_key == "your_hunter_api_key":
         return None, 0.0, None
         
     url = f"https://api.hunter.io/v2/domain-search?domain={domain}&api_key={api_key}"
@@ -205,49 +205,47 @@ def enrich_listing(listing):
         link_listing_to_contact(listing_id, contact)
         return
         
-    # 2. Extract company domain
-    domain = get_company_domain(company)
-    logger.info(f"Domain for {company} parsed as: {domain}")
-    
     email = None
     confidence = 0.0
     name = None
     
-    # 3. Try scraping search engine snippets for emails (Confidence = 1.0)
-    try:
-        found_emails = query_google_cse_for_emails(company, domain)
-        # Filter for domains matching the company
-        company_emails = [e for e in found_emails if e.endswith(f"@{domain}")]
-        if company_emails:
-            email = company_emails[0]
-            confidence = 1.0
-            logger.info(f"Email found via CSE: {email} (Confidence: {confidence})")
-    except Exception as e:
-        logger.warning(f"Google CSE email extraction failed: {e}")
+    # 2. Try extracting email directly from the listing description text (Confidence = 1.0)
+    description = listing.get("description") or ""
+    desc_emails = re.findall(EMAIL_REGEX, description)
+    valid_desc_emails = [e.lower() for e in desc_emails if is_valid_contact_email(e)]
+    if valid_desc_emails:
+        email = valid_desc_emails[0]
+        confidence = 1.0
+        logger.info(f"Email found in listing description: {email} (Confidence: {confidence})")
         
-    # 4. Try Hunter.io API (Confidence = 0.8 max, limit to 1 call per daily pipeline run)
-    if not email and os.getenv("HUNTER_API_KEY"):
-        try:
-            email, confidence, name = query_hunter_api(company, domain)
-            if email:
-                logger.info(f"Email found via Hunter.io: {email} (Confidence: {confidence}, Name: {name})")
-        except Exception as e:
-            logger.warning(f"Hunter.io API domain search failed: {e}")
-            
-    # 5. Pattern-guess generic careers email (Confidence = 0.8 as it targets official recruiting mailboxes)
     if not email:
-        generic_candidates = [
-            f"careers@{domain}",
-            f"jobs@{domain}",
-            f"recruiting@{domain}",
-            f"hr@{domain}"
-        ]
-        for candidate in generic_candidates:
-            if verify_email_domain_has_mx(candidate):
-                email = candidate
-                confidence = 0.8
-                logger.info(f"Email generated via generic pattern: {email} (Confidence: {confidence})")
-                break
+        # 3. Extract company domain
+        domain = get_company_domain(company)
+        logger.info(f"Domain for {company} parsed as: {domain}")
+        
+        # 4. Try scraping search engine snippets for emails (Confidence = 1.0)
+        try:
+            found_emails = query_google_cse_for_emails(company, domain)
+            # Filter for domains matching the company
+            company_emails = [e for e in found_emails if e.endswith(f"@{domain}")]
+            if company_emails:
+                email = company_emails[0]
+                confidence = 1.0
+                logger.info(f"Email found via CSE: {email} (Confidence: {confidence})")
+        except Exception as e:
+            logger.warning(f"Google CSE email extraction failed: {e}")
+            
+        # 5. Try Hunter.io API (Confidence = 0.8 max)
+        hunter_key = os.getenv("HUNTER_API_KEY")
+        if not email and hunter_key and hunter_key != "your_hunter_api_key":
+            try:
+                email, confidence, name = query_hunter_api(company, domain)
+                if email:
+                    logger.info(f"Email found via Hunter.io: {email} (Confidence: {confidence}, Name: {name})")
+            except Exception as e:
+                logger.warning(f"Hunter.io API domain search failed: {e}")
+                
+        # [DISABLED] Step 6: Pattern-guess generic careers email is disabled to prevent bounces.
                 
     # 6. Record findings
     if email and confidence >= 0.7:
