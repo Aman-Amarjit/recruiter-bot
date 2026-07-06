@@ -72,12 +72,21 @@ def main():
                 body = item.get("body") or ""
                 # Guess company name from issue title or repo name
                 # E.g. "[Company] Software Engineer Intern" or repo owner
+                import re
                 repo_url = item.get("repository_url", "")
                 company = "GitHub Community"
                 if "/repos/" in repo_url:
                     parts = repo_url.split("/repos/")
                     if len(parts) > 1:
                         company = parts[1].split("/")[0].capitalize()
+
+                # If the body contains a structured "Company Name" block, extract it
+                if body:
+                    match = re.search(r'###\s*Company Name\s*\r?\n+(?:\s*\r?\n+)*([^\r\n#]+)', body, re.IGNORECASE)
+                    if match:
+                        extracted_company = match.group(1).strip()
+                        if extracted_company:
+                            company = extracted_company
 
                 # Clean body description text (truncate if too long)
                 description = body[:3000] if body else ""

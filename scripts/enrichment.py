@@ -211,8 +211,17 @@ def enrich_listing(listing):
     
     # 2. Try extracting email directly from the listing description text (Confidence = 1.0)
     description = listing.get("description") or ""
-    desc_emails = re.findall(EMAIL_REGEX, description)
-    valid_desc_emails = [e.lower() for e in desc_emails if is_valid_contact_email(e)]
+    # Clean description body of submitter/candidate templates to avoid extracting candidate emails
+    description_cleaned = re.sub(r'(Email associated with your GitHub account|GitHub account|email associated|my email).*', '', description, flags=re.IGNORECASE | re.DOTALL)
+    desc_emails = re.findall(EMAIL_REGEX, description_cleaned)
+    valid_desc_emails = []
+    personal_domains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com", "aol.com", "zoho.com", "protonmail.com", "proton.me", "mail.com"]
+    for e in desc_emails:
+        e_lower = e.lower()
+        domain = e_lower.split("@")[-1] if "@" in e_lower else ""
+        if domain not in personal_domains and is_valid_contact_email(e_lower):
+            valid_desc_emails.append(e_lower)
+            
     if valid_desc_emails:
         email = valid_desc_emails[0]
         confidence = 1.0

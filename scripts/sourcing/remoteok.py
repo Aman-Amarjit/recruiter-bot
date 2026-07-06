@@ -68,6 +68,10 @@ def main():
             # Combine title + tags to search for matches
             search_pool = (title.lower() + " " + " ".join(tags))
             
+            # Ensure it is an internship by checking for "intern" or "internship"
+            if "intern" not in search_pool:
+                continue
+            
             # Check if any keyword matches with word boundaries (avoids 'email' matching 'ai', 'html' matching 'ml', etc.)
             import re
             is_match = False
