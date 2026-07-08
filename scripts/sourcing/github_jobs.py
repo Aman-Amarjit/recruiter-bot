@@ -24,6 +24,40 @@ DOMAIN_KEYWORDS = {
     "robotics": ["robotics internship", "ros2 internship", "control systems internship"]
 }
 
+def is_candidate_submission(title: str, body: str) -> tuple:
+    """
+    Checks if a GitHub issue is a candidate's task or project submission rather than a job post.
+    Returns (True, rule_reason) or (False, None).
+    """
+    import re
+    combined = f"{title or ''}\n{body or ''}".lower()
+    
+    # 1. Strong explicit submission keywords (word boundary check)
+    explicit_submission_pattern = r'\b(project submission|submission checklist|my own work|homework submission|assignment submission|take-home submission|my submission|internship submission|internship project submission|homework|my homework)\b'
+    if re.search(explicit_submission_pattern, combined):
+        return True, "explicit_submission_keyword"
+        
+    # 2. Numbered tasks/tests (e.g. Task-2, task 3) using word boundaries/regex
+    # Matches "task-2", "task 3", "test 4", "challenge 1" case-insensitively
+    numbered_task_pattern = r'\b(task|test|assignment|challenge)\b\s*[-_]?\s*\d+\b'
+    if re.search(numbered_task_pattern, combined):
+        # Only treat as submission if it also mentions submission, intern, or candidate words
+        context_words = ["submission", "intern", "portfolio", "submit", "apply", "test", "candidate", "homework", "task"]
+        if any(w in combined for w in context_words):
+            return True, "numbered_task_with_candidate_context"
+            
+    # 3. Combination of "internship/intern" + "task/test/assignment/challenge" as standalone words
+    # E.g. "AI Internship Test" or "Internship Task"
+    if "intern" in combined:
+        test_task_pattern = r'\b(task|test|assignment|challenge)\b'
+        if re.search(test_task_pattern, combined):
+            # Check if it has other submission context words
+            sub_contexts = ["repository", "pull request", "submit", "submission", "link to", "my code", "completed"]
+            if any(sc in combined for sc in sub_contexts):
+                return True, "intern_task_with_submission_context"
+                
+    return False, None
+
 @retry_api_call
 def fetch_github_issues(query_str: str):
     """
@@ -70,6 +104,12 @@ def main():
                 title = item.get("title")
                 source_url = item.get("html_url")
                 body = item.get("body") or ""
+
+                # Skip issue if it looks like a candidate's project/homework submission rather than a job post
+                is_sub, reason = is_candidate_submission(title, body)
+                if is_sub:
+                    logger.info(f"Skipping candidate submission issue: '{title}' (Reason: {reason}, URL: {source_url})")
+                    continue
                 # Guess company name from issue title or repo name
                 # E.g. "[Company] Software Engineer Intern" or repo owner
                 import re

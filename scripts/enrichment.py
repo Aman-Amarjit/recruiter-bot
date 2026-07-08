@@ -72,15 +72,86 @@ def get_company_domain(company_name: str) -> str:
         
     return domain_guess
 
+def levenshtein_distance(s1: str, s2: str) -> int:
+    """
+    Calculates the Levenshtein distance between two strings.
+    """
+    if len(s1) < len(s2):
+        return levenshtein_distance(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    return previous_row[-1]
+
+def is_candidate_email_domain(domain: str) -> bool:
+    """
+    Checks if a domain is a personal/candidate or university/school email domain.
+    Note: We explicitly block personal domains (gmail, yahoo, etc.) to prevent emailing candidate
+    personal accounts, prioritizing low bounce rates and zero spam risk over small-startup outreach.
+    """
+    domain_clean = (domain or "").strip().lower()
+    if not domain_clean:
+        return True
+        
+    # 1. Typo-tolerant personal email provider check (Levenshtein distance <= threshold)
+    major_providers = [
+        "gmail.com", "yahoo.com", "hotmail.com", "outlook.com", 
+        "icloud.com", "zoho.com", "protonmail.com", "proton.me", "mail.com"
+    ]
+    for provider in major_providers:
+        # If provider name is short, use a stricter threshold (<= 1) to avoid false positives
+        threshold = 1 if len(provider) < 9 else 2
+        if levenshtein_distance(domain_clean, provider) <= threshold:
+            return True
+            
+    # Short providers like aol.com are checked with distance <= 1
+    if levenshtein_distance(domain_clean, "aol.com") <= 1:
+        return True
+
+    # 2. Strict label matching for university/school terms
+    # Split domain into individual labels (by dot and hyphen) to prevent matching "universal-tech.com" or "oldschool.io"
+    import re
+    labels = re.split(r'[\.\-]', domain_clean)
+    candidate_labels = {"student", "college", "school", "univ", "university", "academy", "edu", "ac"}
+    for label in labels:
+        if label in candidate_labels:
+            return True
+            
+    # Check for ending with university TLD extensions
+    if domain_clean.endswith(".edu") or ".edu." in domain_clean or domain_clean.endswith(".ac.ma") or ".ac." in domain_clean:
+        return True
+        
+    return False
+
 def is_valid_contact_email(email: str) -> bool:
     """
-    Validates if an email is not in the blacklist of generic dead-end non-hiring addresses.
+    Validates if an email is not in the blacklist of generic dead-end non-hiring addresses,
+    and is not associated with personal or candidate/student domains.
     """
     if not email or "@" not in email:
         return False
         
-    email_lower = email.lower()
+    # Clean the email string: strip whitespace, remove enclosing quotes/brackets, and trailing punctuation
+    email_clean = email.strip().strip("'\"()[]<>").rstrip(".,;:")
+    
+    # Ensure the cleaned email has exactly one '@'
+    if email_clean.count("@") != 1:
+        return False
+        
+    email_lower = email_clean.lower()
     if email_lower.endswith((".png", ".jpg", ".gif", "example.com", "wixpress.com")):
+        return False
+        
+    domain = email_lower.split("@")[-1]
+    if is_candidate_email_domain(domain):
         return False
         
     prefix = email_lower.split("@")[0]
@@ -214,13 +285,7 @@ def enrich_listing(listing):
     # Clean description body of submitter/candidate templates to avoid extracting candidate emails
     description_cleaned = re.sub(r'(Email associated with your GitHub account|GitHub account|email associated|my email).*', '', description, flags=re.IGNORECASE | re.DOTALL)
     desc_emails = re.findall(EMAIL_REGEX, description_cleaned)
-    valid_desc_emails = []
-    personal_domains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com", "aol.com", "zoho.com", "protonmail.com", "proton.me", "mail.com"]
-    for e in desc_emails:
-        e_lower = e.lower()
-        domain = e_lower.split("@")[-1] if "@" in e_lower else ""
-        if domain not in personal_domains and is_valid_contact_email(e_lower):
-            valid_desc_emails.append(e_lower)
+    valid_desc_emails = [e for e in desc_emails if is_valid_contact_email(e)]
             
     if valid_desc_emails:
         email = valid_desc_emails[0]
