@@ -20,7 +20,7 @@ SOURCE_NAME = "github"
 # Define query keywords per domain
 DOMAIN_KEYWORDS = {
     "ai_ml": ["machine learning internship", "ai internship", "computer vision internship"],
-    "cybersecurity": ["cybersecurity internship", "security analyst internship", "penetration testing"],
+    "cybersecurity": ["cybersecurity internship", "security analyst internship", "penetration testing internship"],
     "robotics": ["robotics internship", "ros2 internship", "control systems internship"]
 }
 
