@@ -319,7 +319,20 @@ def enrich_listing(listing):
             except Exception as e:
                 logger.warning(f"Hunter.io API domain search failed: {e}")
                 
-        # [DISABLED] Step 6: Pattern-guess generic careers email is disabled to prevent bounces.
+        # 6. Pattern-guess generic careers email (Confidence = 0.8 as it targets official recruiting mailboxes)
+        if not email:
+            generic_candidates = [
+                f"careers@{domain}",
+                f"jobs@{domain}",
+                f"recruiting@{domain}",
+                f"hr@{domain}"
+            ]
+            for candidate in generic_candidates:
+                if not is_candidate_email_domain(domain) and verify_email_domain_has_mx(candidate):
+                    email = candidate
+                    confidence = 0.8
+                    logger.info(f"Email generated via generic pattern: {email} (Confidence: {confidence})")
+                    break
                 
     # 6. Record findings
     if email and confidence >= 0.7:
