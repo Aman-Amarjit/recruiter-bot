@@ -358,17 +358,43 @@ def enrich_listing(listing):
 def link_listing_to_contact(listing_id: str, contact: dict):
     """
     Links a listing to a contact by inserting a row in the applications table.
-    Uses status = 'drafting' to register it for the personalization pipeline.
+    If the contact is within the 10-day cooldown, creates the application with status = 'cancelled' to save LLM tokens.
+    Otherwise, uses status = 'drafting' to register it for the personalization pipeline.
     """
+    import datetime
+    
+    # 10-day cooldown check
+    status = "drafting"
+    failure_reason = None
+    
+    last_emailed_str = contact.get("last_emailed_at")
+    if last_emailed_str:
+        try:
+            # Handle potential Z/timezone formatting
+            last_emailed = datetime.datetime.fromisoformat(last_emailed_str.replace("Z", "+00:00"))
+            time_since = datetime.datetime.now(datetime.timezone.utc) - last_emailed
+            if time_since.days < 10:
+                status = "cancelled"
+                failure_reason = f"contact cooldown (last emailed {time_since.days} days ago)"
+                logger.info(f"Contact {contact['email']} is within 10-day cooldown. Creating application as 'cancelled'.")
+        except Exception as e:
+            logger.warning(f"Error checking cooldown in link_listing_to_contact: {e}")
+            
     try:
         supabase.table("applications").upsert({
             "listing_id": listing_id,
             "contact_id": contact["id"],
-            "status": "drafting",
+            "status": status,
             "email_body": "",
-            "critique_score": None
+            "critique_score": None,
+            "failure_reason": failure_reason
         }, on_conflict="listing_id,contact_id").execute()
-        logger.info(f"Created application link: Listing {listing_id} -> Contact {contact['email']}")
+        
+        if status == "drafting":
+            logger.info(f"Created application link: Listing {listing_id} -> Contact {contact['email']} (status: drafting)")
+        else:
+            logger.info(f"Created application link: Listing {listing_id} -> Contact {contact['email']} (status: cancelled due to cooldown)")
+            
     except Exception as e:
         logger.warning(f"Error creating application link: {e}")
 
