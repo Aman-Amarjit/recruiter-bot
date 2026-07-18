@@ -35,8 +35,26 @@
   "domains": {
     "ai_ml": {
       "focus": "Automated Agentic Workflows, NLP Pipelines, and LLM Orchestration",
-      "skills": ["Python", "Groq", "FastAPI", "WebSockets", "Twilio API", "TTS/STT", "NLP", "LLM Orchestration", "Agentic Workflows", "Docker", "PM2", "SQLite", "Meta API", "Diffusers", "Pillow"],
+      "skills": ["Python", "Groq", "FastAPI", "WebSockets", "Twilio API", "TTS/STT", "NLP", "LLM Orchestration", "Agentic Workflows", "Docker", "PM2", "SQLite", "Meta API", "Diffusers", "Pillow", "Keras", "TensorFlow", "ffmpeg", "Whisper", "Vite", "React", "Gemini API"],
       "projects": [
+        {
+          "name": "youtube-bot",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/youtube-bot",
+          "description": "Fully autonomous YouTube Shorts automation bot powered by AI, running daily on GitHub Actions to discover, crop (16:9 to 9:16), transcribe (Whisper), and upload game clips with dynamically generated voiceovers and subtitles.",
+          "technologies": ["Python", "ffmpeg", "Whisper", "LLaVA", "Llama3", "Edge-TTS", "Piper", "GitHub Actions"]
+        },
+        {
+          "name": "BharatLex",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/BharatLex",
+          "description": "High-utility contract analysis and drafting web application for Indian MSMEs that uses LLMs to parse agreements, flag high-risk clauses, and generate summaries and drafts.",
+          "technologies": ["Node.js", "Vite", "React", "Python", "FastAPI", "Gemini API"]
+        },
+        {
+          "name": "brain-tumor-detector",
+          "github_url": "https://github.com/YOUR_GITHUB_USERNAME/brain-tumor-detector-using-convolutional-neural-network",
+          "description": "Deep learning brain tumor MRI scan classifier built using an optimized multi-layer CNN architecture that reduced parameters by 93% to prevent overfitting and ensure high training stability.",
+          "technologies": ["Python", "Keras", "TensorFlow", "Jupyter Notebook"]
+        },
         {
           "name": "Knowledge-Synthesizer",
           "github_url": "https://github.com/YOUR_GITHUB_USERNAME/Knowledge-Synthesizer",
