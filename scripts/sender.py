@@ -223,13 +223,13 @@ def process_send_queue():
             supabase.table("applications").update({"status": "failed"}).eq("id", app_id).execute()
             continue
             
-        # 30-day cooldown check
+        # 10-day cooldown check
         last_emailed_str = contact.get("last_emailed_at")
         if last_emailed_str:
             last_emailed = datetime.datetime.fromisoformat(last_emailed_str.replace("Z", "+00:00"))
             time_since = datetime.datetime.now(datetime.timezone.utc) - last_emailed
-            if time_since.days < 30:
-                logger.warning(f"Contact {email} was emailed {time_since.days} days ago (cooldown limit is 30). Skipping App {app_id}.")
+            if time_since.days < 10:
+                logger.warning(f"Contact {email} was emailed {time_since.days} days ago (cooldown limit is 10). Skipping App {app_id}.")
                 supabase.table("applications").update({"status": "held"}).eq("id", app_id).execute()
                 continue
                 
